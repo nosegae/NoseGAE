@@ -11,5 +11,5 @@ setup(
         'nose.plugins.0.10': [ 'nosegae = nosegae:NoseGAE']
         },
 
-    tests_require = ['webob', 'webtest']
+    tests_require = ['WebTest']
     )
