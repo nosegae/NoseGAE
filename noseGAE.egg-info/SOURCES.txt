@@ -1,0 +1,7 @@
+setup.cfg
+setup.py
+noseGAE.egg-info/PKG-INFO
+noseGAE.egg-info/SOURCES.txt
+noseGAE.egg-info/dependency_links.txt
+noseGAE.egg-info/entry_points.txt
+noseGAE.egg-info/top_level.txt
