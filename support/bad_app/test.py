@@ -1,14 +1,12 @@
-print "===================== test code ======================"
 from webtest import TestApp
 from bad_app import application
-from bisect import bisect
-print bisect
-
-
+import socket
 
 app = TestApp(application())
 
-def test_writing():
+def test_index_calls_gethostbyname():
+    # this works, because in test code GAE sandbox is not active
+    host = socket.gethostbyname('localhost')
     response = app.get('/')
     assert 'Hello' in str(response)
-print "========================== end test code ======================"
+    assert host in str(response)

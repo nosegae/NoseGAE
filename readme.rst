@@ -7,8 +7,8 @@ NoseGAE: Test support for Google Application Engine
 Overview
 ========
 
-NoseGAE is a nose_ plugin that makes it easier to write unit tests for
-`Google App Engine`_ applications.
+NoseGAE is a nose_ plugin that makes it easier to write functional and unit
+tests for `Google App Engine`_ applications.
 
 When the plugin is installed, you can activate it by using the
 ``--with-gae`` command line option. The plugin also includes an option
@@ -119,21 +119,25 @@ runtime environment. When you test without NoseGAE, tests that should
 fail (because the tested code **will fail** when run inside the Google
 App Engine) may pass.
 
-For instance, consider an app that writes to a file, like this one:
+For instance, consider an app that uses the `socket` module, like this one:
 
-.. include :: support/badapp/badapp.py
+.. include :: support/bad_app/bad_app.py
+   :literal:
 
 With a simple functional test:
 
-.. include :: support/badapp/test.py
+.. include :: support/bad_app/test.py
+   :literal:
 
-This test will pass when run outside of the Google App Engine environment.
-
+This test will pass when run outside of the Google App Engine
+environment. (Again, we have to run this in a new process, since this process
+had already been set up for GAE).
+ 
     >>> bad_app = os.path.join(support, 'bad_app')
     >>> print Popen(
     ...     ["nosetests", "-v", bad_app],
     ...     stderr=PIPE).stderr.read() # doctest: +ELLIPSIS +REPORT_NDIFF
-    test.test_writing ... ok
+    test.test_index_calls_gethostbyname ... ok
     <BLANKLINE>
     ----------------------------------------------------------------------
     Ran 1 test in ...s
@@ -146,8 +150,19 @@ When run with NoseGAE, it will fail, as it should.
     >>> run(argv=['nosetests', '-v', '--with-gae',
     ...           '--gae-application', bad_app, bad_app],
     ...     plugins=[NoseGAE()])
-    test.test_writing ... ERROR
-    FIXME
+    test.test_index_calls_gethostbyname ... ERROR
+    <BLANKLINE>
+    ======================================================================
+    ERROR: test.test_index_calls_gethostbyname
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+    ...
+    AttributeError: 'module' object has no attribute 'gethostbyname'
+    <BLANKLINE>
+    ----------------------------------------------------------------------
+    Ran 1 test in ...s
+    <BLANKLINE>
+    FAILED (errors=1)
 
 .. _nose : http://somethingaboutorange.com/mrl/projects/nose/
 .. _`google app engine` : http://code.google.com/appengine/
