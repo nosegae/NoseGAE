@@ -143,9 +143,9 @@ This test will pass when run outside of the Google App Engine environment.
     
 When run with NoseGAE, it will fail, as it should.
 
-    >>> run(argv=['nosetests', '-v', '--with-doctest',
-    ...           '--with-gae', '--gae-application', bad_app, bad_app],
-    ...     plugins=[Doctest(), NoseGAE()])
+    >>> run(argv=['nosetests', '-v', '--with-gae',
+    ...           '--gae-application', bad_app, bad_app],
+    ...     plugins=[NoseGAE()])
     test.test_writing ... ERROR
     FIXME
 

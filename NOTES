@@ -1,0 +1,3 @@
+* doctest foils the import hook by using nose's importer, so the plugin
+  must also install a nose importer that can turn on restricted mode
+
