@@ -1,9 +1,7 @@
-import __builtin__
 import os
 import pdb
 import logging
 import sys
-import types
 from imp import find_module, acquire_lock, release_lock
 from warnings import warn
 from nose.importer import Importer, add_path
@@ -12,30 +10,14 @@ from nose.plugins.base import Plugin
 
 log = logging.getLogger(__name__)
 
-"""
-NOTES
-
-importing is very thorny
-
-what we want is for *test* modules to import normally, but *non-test*
-modules to import under the gae restricted environment.
-
-That includes, of course, non-test modules *imported from test modules*
-
-So we need an import hook that turns on gae's restricted environment
-only for modules:
- a) under the app path
- c) that don't include 'test' in the name
-
-"""
-
-
-
 
 class NoseGAE(Plugin):
     """
-    Initialize the GAE environment for a given application at the
-    beginning of the test run.
+    Activate this plugin to run tests in Google App Engine dev
+    environment. When the plugin is active, Google App Engine dev stubs, such
+    as the stub datastore, will be available, and application code will run in
+    a sandbox that restricts module loading in the same way as it is
+    restricted when running under GAE.
     """
     name = 'gae'
     lib_dirs = ('', 'lib/django', 'lib/webob', 'lib/yaml/lib')
@@ -176,9 +158,7 @@ class HookMixin(object):
         sys.modules.update(self.preserve)
         if hasattr(sys, 'path_importer_cache'):
             sys.path_importer_cache.clear()
-        # FIXME clear path import cache
-        # FIXME possible to patch __builtin__.file, etc?
-
+    
     def is_sandboxed(self, mod_name):
         return mod_name == self.sandbox
 
@@ -190,9 +170,7 @@ class HookMixin(object):
         sys.modules.update(self._old_modules)
         if hasattr(sys, 'path_importer_cache'):
             sys.path_importer_cache.clear()
-        # FIXME clear path importer cache
-        # FIXME restore __builtin__.file, etc
-    
+        
     def find_mod_path(self, fullname):
         # we really only need the path to the top
         top = fullname.split('.')[0]

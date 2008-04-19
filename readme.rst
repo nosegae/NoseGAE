@@ -111,7 +111,7 @@ With NoseGAE, they pass.
     OK
 
 Realism in testing
-~~~~~~~~~~~~~~~~~~
+==================
 
 Besides the dev appserver and the datastore, the main sticking point
 for testing Google App Engine applications is the highly restrictive
@@ -163,6 +163,15 @@ When run with NoseGAE, it will fail, as it should.
     Ran 1 test in ...s
     <BLANKLINE>
     FAILED (errors=1)
+
+It is important to note that only **application** code is sandboxed by
+NoseGAE. Test code imports outside of the sandbox, so your test code has full
+access to the system and available python libraries, including the Google App
+Engine datastore and other Google App Engine libraries.
+
+For this reason, **file access is not restricted** in the same way as it
+is under GAE, because it is impossible to differentiate application code file
+access from test code file access.
 
 .. _nose : http://somethingaboutorange.com/mrl/projects/nose/
 .. _`google app engine` : http://code.google.com/appengine/

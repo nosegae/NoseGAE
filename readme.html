@@ -299,9 +299,9 @@ ul.auto-toc {
 <li><a class="reference" href="#what-does-it-do" id="id2" name="id2">What does it do?</a><ul>
 <li><a class="reference" href="#functional-tests" id="id3" name="id3">Functional tests</a></li>
 <li><a class="reference" href="#unit-tests" id="id4" name="id4">Unit tests</a></li>
-<li><a class="reference" href="#realism-in-testing" id="id5" name="id5">Realism in testing</a></li>
 </ul>
 </li>
+<li><a class="reference" href="#realism-in-testing" id="id5" name="id5">Realism in testing</a></li>
 </ul>
 </div>
 <div class="section">
@@ -478,8 +478,9 @@ OK
 </pre>
 </blockquote>
 </div>
+</div>
 <div class="section">
-<h2><a class="toc-backref" href="#id5" id="realism-in-testing" name="realism-in-testing">Realism in testing</a></h2>
+<h1><a class="toc-backref" href="#id5" id="realism-in-testing" name="realism-in-testing">Realism in testing</a></h1>
 <p>Besides the dev appserver and the datastore, the main sticking point
 for testing Google App Engine applications is the highly restrictive
 runtime environment. When you test without NoseGAE, tests that should
@@ -562,7 +563,13 @@ Ran 1 test in ...s
 FAILED (errors=1)
 </pre>
 </blockquote>
-</div>
+<p>It is important to note that only <strong>application</strong> code is sandboxed by
+NoseGAE. Test code imports outside of the sandbox, so your test code has full
+access to the system and available python libraries, including the Google App
+Engine datastore and other Google App Engine libraries.</p>
+<p>For this reason, <strong>file access is not restricted</strong> in the same way as it
+is under GAE, because it is impossible to differentiate application code file
+access from test code file access.</p>
 </div>
 </div>
 </body>
