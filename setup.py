@@ -4,7 +4,7 @@ DESCRIPTION = """\
 NoseGAE: nose plugin for Google App Engine testing\
 """
 
-LONG_DESCRIPTION = open('readme.rst', 'r').read()
+LONG_DESCRIPTION = open('docs/readme.html', 'r').read()
 
 CLASSIFIERS = [
     "Development Status :: 3 - Alpha",
