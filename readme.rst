@@ -2,6 +2,7 @@
 NoseGAE: Test support for Google Application Engine
 ---------------------------------------------------
 
+.. fixtures :: fixt
 .. contents ::
 
 Overview
@@ -43,20 +44,18 @@ application under test and call it directly, without having to pass
 through the dev app server. And that's all you need to do for basic
 functional testing.
 
-    >>> import os
-    >>> support = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-    ...                        'support')
-    >>> hello_app = os.path.join(support, 'helloworld')
-    >>> from nose.plugins.plugintest import run
-    >>> from nosegae import NoseGAE
-    >>> run(argv=['nosegae', '--with-gae', '--gae-application', hello_app,
-    ...           '-v', hello_app], plugins=[NoseGAE()])
-    test.test_index ... ok
-    <BLANKLINE>
-    ----------------------------------------------------------------------
-    Ran 1 test in ...s
-    <BLANKLINE>
-    OK
+.. shell :: nosetests -v --with-gae
+   :cwd: support/helloworld
+   :post: cleanup
+   :stderr:
+
+   test.test_index ... ok
+   <BLANKLINE>
+   ----------------------------------------------------------------------
+   Ran 1 test in ...s
+   <BLANKLINE>
+   OK
+..
 
 Unit tests
 ~~~~~~~~~~
@@ -73,42 +72,42 @@ Consider a simple models file that includes some doctests:
 .. include:: support/pets/models.py
    :literal:
 
-Without NoseGAE, the doctests fail. (To see this we have to run nose
-in a new process, since we've already loaded the GAE environment in
-this one).
+Without NoseGAE, the doctests fail.
 
-    >>> pets_app = os.path.join(support, 'pets')
-    >>> from subprocess import Popen, PIPE
-    >>> print Popen(
-    ...     ["nosetests", "-v", "--with-doctest", pets_app],
-    ...     stderr=PIPE).stderr.read() # doctest: +IGNORE_EXCEPTION_DETAIL +ELLIPSIS +REPORT_NDIFF
-    Failure: ImportError (No module named google.appengine.ext) ... ERROR
-    <BLANKLINE>
-    ======================================================================
-    ERROR: Failure: ImportError (No module named google.appengine.ext)
-    ----------------------------------------------------------------------
-    Traceback (most recent call last):
-      ...
-    ImportError: No module named google.appengine.ext
-    <BLANKLINE>
-    ----------------------------------------------------------------------
-    Ran 1 test in 0...s
-    <BLANKLINE>
-    FAILED (errors=1)
-    <BLANKLINE>
+.. shell :: nosetests -v --with-doctest
+   :cwd: support/pets
+   :post: cleanup
+   :stderr:
 
+   Failure: ImportError (No module named google.appengine.ext) ... ERROR
+   <BLANKLINE>
+   ======================================================================
+   ERROR: Failure: ImportError (No module named google.appengine.ext)
+   ----------------------------------------------------------------------
+   Traceback (most recent call last):
+   ...
+   ImportError: No module named google.appengine.ext
+   <BLANKLINE>
+   ----------------------------------------------------------------------
+   Ran 1 test in ...s
+   <BLANKLINE>
+   FAILED (errors=1)
+..
+     
 With NoseGAE, they pass.
 
-    >>> from nose.plugins.doctests import Doctest
-    >>> run(argv=['nosetests', '-v', '--with-doctest',
-    ...           '--with-gae', '--gae-application', pets_app, pets_app],
-    ...     plugins=[Doctest(), NoseGAE()])
-    Doctest: models.Pet ... ok
-    <BLANKLINE>
-    ----------------------------------------------------------------------
-    Ran 1 test in ...s
-    <BLANKLINE>
-    OK
+.. shell :: nosetests -v --with-doctest --with-gae
+   :cwd: support/pets
+   :post: cleanup
+   :stderr:
+
+   Doctest: models.Pet ... ok
+   <BLANKLINE>
+   ----------------------------------------------------------------------
+   Ran 1 test in ...s
+   <BLANKLINE>
+   OK
+..
 
 Realism in testing
 ==================
@@ -133,37 +132,41 @@ This test will pass when run outside of the Google App Engine
 environment. (Again, we have to run this in a new process, since this process
 had already been set up for GAE).
  
-    >>> bad_app = os.path.join(support, 'bad_app')
-    >>> print Popen(
-    ...     ["nosetests", "-v", bad_app],
-    ...     stderr=PIPE).stderr.read() # doctest: +ELLIPSIS +REPORT_NDIFF
-    test.test_index_calls_gethostbyname ... ok
-    <BLANKLINE>
-    ----------------------------------------------------------------------
-    Ran 1 test in ...s
-    <BLANKLINE>
-    OK
-    <BLANKLINE>
+.. shell :: nosetests -v
+   :cwd: support/bad_app
+   :post: cleanup
+   :stderr:
+
+   test.test_index_calls_gethostbyname ... ok
+   <BLANKLINE>
+   ----------------------------------------------------------------------
+   Ran 1 test in ...s
+   <BLANKLINE>
+   OK
+..
     
 When run with NoseGAE, it will fail, as it should.
 
-    >>> run(argv=['nosetests', '-v', '--with-gae',
-    ...           '--gae-application', bad_app, bad_app],
-    ...     plugins=[NoseGAE()])
-    test.test_index_calls_gethostbyname ... ERROR
-    <BLANKLINE>
-    ======================================================================
-    ERROR: test.test_index_calls_gethostbyname
-    ----------------------------------------------------------------------
-    Traceback (most recent call last):
-    ...
-    AttributeError: 'module' object has no attribute 'gethostbyname'
-    <BLANKLINE>
-    ----------------------------------------------------------------------
-    Ran 1 test in ...s
-    <BLANKLINE>
-    FAILED (errors=1)
+.. shell :: nosetests -v --with-gae
+   :cwd: support/bad_app
+   :post: cleanup
+   :stderr:
 
+   test.test_index_calls_gethostbyname ... ERROR
+   <BLANKLINE>
+   ======================================================================
+   ERROR: test.test_index_calls_gethostbyname
+   ----------------------------------------------------------------------
+   Traceback (most recent call last):
+    ...
+   AttributeError: 'module' object has no attribute 'gethostbyname'
+   <BLANKLINE>
+   ----------------------------------------------------------------------
+   Ran 1 test in ...s
+   <BLANKLINE>
+   FAILED (errors=1)
+..
+    
 It is important to note that only **application** code is sandboxed by
 NoseGAE. Test code imports outside of the sandbox, so your test code has full
 access to the system and available python libraries, including the Google App

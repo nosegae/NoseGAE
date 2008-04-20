@@ -11,10 +11,9 @@ CLASSIFIERS = [
     "Intended Audience :: Developers",
     ("License :: OSI Approved :: GNU Library or "
      "Lesser General Public License (LGPL)"),
-    "License :: OSI Approved :: LGPL License",
     "Topic :: Software Development :: Testing"
     ]
-VERSION = '0.1'
+VERSION = '0.2a1'
 AUTHOR = 'Jason Pellerin'
 AUTHOR_EMAIL = 'jpellerin@gmail.com'
 
@@ -32,5 +31,5 @@ setup(
         'nose.plugins.0.10': [ 'nosegae = nosegae:NoseGAE']
         },
     py_modules = ['nosegae'],
-    tests_require = ['WebTest']
+    tests_require = ['WebTest', 'Trestle>=0.2a1']
     )
