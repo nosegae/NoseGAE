@@ -129,8 +129,7 @@ With a simple functional test:
    :literal:
 
 This test will pass when run outside of the Google App Engine
-environment. (Again, we have to run this in a new process, since this process
-had already been set up for GAE).
+environment.
  
 .. shell :: nosetests -v
    :cwd: support/bad_app
