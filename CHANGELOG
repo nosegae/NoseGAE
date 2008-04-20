@@ -1,0 +1,4 @@
+0.1.1
+
+- Updated self-test to use trestle so that the resulting documentation is more
+  clear for end users.
