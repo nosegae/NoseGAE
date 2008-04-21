@@ -13,7 +13,7 @@ CLASSIFIERS = [
      "Lesser General Public License (LGPL)"),
     "Topic :: Software Development :: Testing"
     ]
-VERSION = '0.1.2a1'
+VERSION = '0.1.3a1'
 AUTHOR = 'Jason Pellerin'
 AUTHOR_EMAIL = 'jpellerin@gmail.com'
 

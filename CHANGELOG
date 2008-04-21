@@ -1,4 +1,11 @@
+0.1.2
+
+- Updated datastore handling to use a nosegae-specific datastore by
+  default. This prevents the test run from clearing the default
+  dev_appserver datastore, as would happen with earlier
+  releases. Thanks to Andy for raising the issue.
+
 0.1.1
 
-- Updated self-test to use trestle so that the resulting documentation is more
-  clear for end users.
+- Updated self-test to use trestle so that the resulting documentation
+  is more clear for end users.
