@@ -2,6 +2,7 @@ import os
 import pdb
 import logging
 import sys
+import tempfile
 from imp import find_module, acquire_lock, release_lock
 from warnings import warn
 from nose.importer import Importer, add_path
@@ -53,10 +54,13 @@ class NoseGAE(Plugin):
         try:
             from google.appengine.tools import dev_appserver
             from google.appengine.tools.dev_appserver_main import \
-                DEFAULT_ARGS, ARG_CLEAR_DATASTORE, ARG_LOG_LEVEL
+                DEFAULT_ARGS, ARG_CLEAR_DATASTORE, ARG_LOG_LEVEL, \
+                ARG_DATASTORE_PATH, ARG_HISTORY_PATH
             self._gae = {'dev_appserver': dev_appserver,
                          'ARG_LOG_LEVEL': ARG_LOG_LEVEL,
                          'ARG_CLEAR_DATASTORE': ARG_CLEAR_DATASTORE,
+                         'ARG_DATASTORE_PATH': ARG_DATASTORE_PATH,
+                         'ARG_HISTORY_PATH': ARG_HISTORY_PATH,
                          'DEFAULT_ARGS': DEFAULT_ARGS}
             # prefill these into sys.modules
             import webob
@@ -77,9 +81,15 @@ class NoseGAE(Plugin):
     def begin(self):
         args = self._gae['DEFAULT_ARGS']
         clear = self._gae['ARG_CLEAR_DATASTORE']
+        ds_path = self._gae['ARG_DATASTORE_PATH']
+        hs_path = self._gae['ARG_HISTORY_PATH']
         dev_appserver = self._gae['dev_appserver']
         gae_opts = args.copy()
         gae_opts[clear] = True
+        gae_opts[ds_path] = os.path.join(tempfile.gettempdir(),
+                                         'nosegae.datastore')
+        gae_opts[hs_path] = os.path.join(tempfile.gettempdir(),
+                                         'nosegae.datastore.history')
         config, _junk = dev_appserver.LoadAppConfig(self._path, {})
         dev_appserver.SetupStubs(config.application, **gae_opts)
         self._install_hook(dev_appserver.HardenedModulesHook)
