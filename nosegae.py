@@ -93,7 +93,7 @@ class NoseGAE(Plugin):
         config, _junk = dev_appserver.LoadAppConfig(self._path, {})
         dev_appserver.SetupStubs(config.application, **gae_opts)
         self._install_hook(dev_appserver.HardenedModulesHook)
-        # dev_appserver.HardenedModulesHook.ENABLE_LOGGING = True
+        #dev_appserver.HardenedModulesHook.ENABLE_LOGGING = True
 
     def beforeImport(self, filename, module):
         if not self.hook.sandbox:
