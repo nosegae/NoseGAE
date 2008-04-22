@@ -66,13 +66,13 @@ class NoseGAE(Plugin):
             import webob
             import yaml
             import django
-            self._preserve_mods = dict(
-                (name, sys.modules[name]) for name in sys.modules.keys()
-                if (name.startswith('google')
-                    or name.startswith('webob')
-                    or name.startswith('yaml')
-                    or name.startswith('django')
-                    or name.startswith('nose')))
+            # self._preserve_mods = dict(
+#                 (name, sys.modules[name]) for name in sys.modules.keys()
+#                 if (name.startswith('google')
+#                     or name.startswith('webob')
+#                     or name.startswith('yaml')
+#                     or name.startswith('django')
+#                     or name.startswith('nose')))
         except ImportError, e:
             self.enabled = False
             warn("Google App Engine not found in %s" % options.gae_lib_root,
@@ -110,7 +110,7 @@ class NoseGAE(Plugin):
             dev_appserver = self._gae['dev_appserver']
             sandbox_root = self._path
             testMatch = self.config.testMatch
-            preserve = self._preserve_mods.copy()
+            module_dict = self._setup_shared_modules()
         self.hook = Hook(sys.modules)
         sys.meta_path = [self.hook]
         # set up allowed file access paths
@@ -118,7 +118,10 @@ class NoseGAE(Plugin):
         if self._gae_path:
             paths.append(self._gae_path)
         dev_appserver.FakeFile.SetAllowedPaths(paths)
-                                                
+
+    def _setup_shared_modules(self):
+        return self._gae['dev_appserver'].SetupSharedModules(sys.modules)
+        
         
 class HookMixin(object):
     """
@@ -153,6 +156,9 @@ class HookMixin(object):
     def load_module(self, fullname):
         # only called when sandboxed
         try:
+            # FIXME: possible strategy for sandboxing file, open, etc
+            # if mod.file is <type 'file'> or nothing, set it to
+            # FakeFile. Same for mod.open.
             return super(HookMixin, self).load_module(fullname)
         finally:
             if fullname == self.sandbox:
@@ -165,7 +171,8 @@ class HookMixin(object):
         self.sandbox = mod_name
         self._old_modules = sys.modules.copy()
         self.dev_appserver.ClearAllButEncodingsModules(sys.modules)
-        sys.modules.update(self.preserve)
+        # restore shared modules (see issue #2)
+        sys.modules.update(self.module_dict)
         if hasattr(sys, 'path_importer_cache'):
             sys.path_importer_cache.clear()
     
