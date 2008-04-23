@@ -1,3 +1,13 @@
+0.1.3
+
+- Fixed bug in handling of modules shared between sandboxed and
+  non-sandboxed code that caused sys.modules to be empty in sandbox
+  (among other problems). Thanks to Kumar McMillan for the bug report
+  (#2).
+- Changed sys.path munging to ensure that libs that may be in google
+  and system libraries are loaded from google's libdir. Thanks to
+  Kumar McMillan for the bug report and patch (#6).
+
 0.1.2
 
 - Updated datastore handling to use a nosegae-specific datastore by
