@@ -48,7 +48,7 @@ class NoseGAE(Plugin):
         if options.gae_lib_root is not None:
             root = self._gae_path = options.gae_lib_root
             for d in self.lib_dirs:
-                sys.path.append(os.path.join(root, d))
+                sys.path.insert(0, os.path.join(root, d))
         else:
             self._gae_path = None
         try:
