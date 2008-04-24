@@ -66,13 +66,6 @@ class NoseGAE(Plugin):
             import webob
             import yaml
             import django
-            # self._preserve_mods = dict(
-#                 (name, sys.modules[name]) for name in sys.modules.keys()
-#                 if (name.startswith('google')
-#                     or name.startswith('webob')
-#                     or name.startswith('yaml')
-#                     or name.startswith('django')
-#                     or name.startswith('nose')))
         except ImportError, e:
             self.enabled = False
             warn("Google App Engine not found in %s" % options.gae_lib_root,
@@ -93,7 +86,7 @@ class NoseGAE(Plugin):
         config, _junk = dev_appserver.LoadAppConfig(self._path, {})
         dev_appserver.SetupStubs(config.application, **gae_opts)
         self._install_hook(dev_appserver.HardenedModulesHook)
-        #dev_appserver.HardenedModulesHook.ENABLE_LOGGING = True
+        # dev_appserver.HardenedModulesHook.ENABLE_LOGGING = True
 
     def beforeImport(self, filename, module):
         if not self.hook.sandbox:
@@ -120,7 +113,10 @@ class NoseGAE(Plugin):
         dev_appserver.FakeFile.SetAllowedPaths(paths)
 
     def _setup_shared_modules(self):
-        return self._gae['dev_appserver'].SetupSharedModules(sys.modules)
+        mods = self._gae['dev_appserver'].SetupSharedModules(sys.modules)
+        mods.update(dict((name, mod) for name, mod in sys.modules.items()
+                         if name.startswith('nose')))
+        return mods
         
         
 class HookMixin(object):
@@ -184,6 +180,8 @@ class HookMixin(object):
             return
         self.log("<<< EXIT sandbox %s" % self.sandbox)
         self.sandbox = None
+        # preserve loaded modules for next entry into sandbox (see issue #7)
+        self.module_dict.update(sys.modules)
         sys.modules.update(self._old_modules)
         if hasattr(sys, 'path_importer_cache'):
             sys.path_importer_cache.clear()

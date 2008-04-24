@@ -56,3 +56,25 @@ And the test package and modules under it will be outside the sandbox.
    <BLANKLINE>
    OK
 ..
+
+Issue 7
+^^^^^^^
+
+The modules loaded by any sandboxed module are added to the shared module set,
+so that they persist between entries into the sandbox. This prevents weird
+import errors when you have more than one test module, one of which imports a
+module from a sandboxed package.
+
+.. shell :: nosetests -v --with-gae
+   :cwd: support/issue07
+   :post: cleanup
+   :stderr:
+
+   tests.test.test_index ... ok
+   tests.test_models.test ... ok
+   <BLANKLINE>
+   ----------------------------------------------------------------------
+   Ran 2 tests in ...s
+   <BLANKLINE>
+   OK
+..
