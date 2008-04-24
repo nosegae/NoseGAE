@@ -7,7 +7,11 @@
 - Changed sys.path munging to ensure that libs that may be in google
   and system libraries are loaded from google's libdir. Thanks to
   Kumar McMillan for the bug report and patch (#6).
-
+- Fixed bug in how the sandbox shared module set was maintained between
+  entries into the sandbox, which could cause a cascade of import errors
+  under certain arrangments of test and app code. Thanks to Kumar McMillan
+  for the bug report (#7).
+  
 0.1.2
 
 - Updated datastore handling to use a nosegae-specific datastore by
