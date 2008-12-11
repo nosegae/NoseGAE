@@ -35,6 +35,11 @@ class NoseGAE(Plugin):
             help='Set the path to the GAE application '
             'under test. Default is the nose `where` '
             'directory (generally the pwd)')
+        parser.add_option(
+            '--gae-datastore', default=None, action='store', dest='gae_data',
+            help='Set the path to the GAE datastore to use in tests. '
+            'Note that when using an existing datastore directory, the '
+            'datastore will not be cleared before testing begins.')
 
     def configure(self, options, config):
         super(NoseGAE, self).configure(options, config)
@@ -51,6 +56,13 @@ class NoseGAE(Plugin):
                 sys.path.insert(0, os.path.join(root, d))
         else:
             self._gae_path = None
+        if options.gae_data is not None:
+            self._data_path = options.gae_data
+            self._temp_data = False
+        else:
+            self._data_path = os.path.join(tempfile.gettempdir(),
+                                           'nosegae.datastore')
+            self._temp_data = True
         try:
             from google.appengine.tools import dev_appserver
             from google.appengine.tools.dev_appserver_main import \
@@ -78,9 +90,8 @@ class NoseGAE(Plugin):
         hs_path = self._gae['ARG_HISTORY_PATH']
         dev_appserver = self._gae['dev_appserver']
         gae_opts = args.copy()
-        gae_opts[clear] = True
-        gae_opts[ds_path] = os.path.join(tempfile.gettempdir(),
-                                         'nosegae.datastore')
+        gae_opts[clear] = self._temp_data
+        gae_opts[ds_path] = self._data_path
         gae_opts[hs_path] = os.path.join(tempfile.gettempdir(),
                                          'nosegae.datastore.history')
         config, _junk = dev_appserver.LoadAppConfig(self._path, {})
