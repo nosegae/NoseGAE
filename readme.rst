@@ -157,7 +157,7 @@ When run with NoseGAE, it will fail, as it should.
    ERROR: test.test_index_calls_gethostbyname
    ----------------------------------------------------------------------
    Traceback (most recent call last):
-    ...
+   ...
    AttributeError: 'module' object has no attribute 'gethostbyname'
    <BLANKLINE>
    ----------------------------------------------------------------------

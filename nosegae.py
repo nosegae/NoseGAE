@@ -21,7 +21,7 @@ class NoseGAE(Plugin):
     restricted when running under GAE.
     """
     name = 'gae'
-    lib_dirs = ('', 'lib/django', 'lib/webob', 'lib/yaml/lib')
+    lib_dirs = ('', 'lib/django', 'lib/webob', 'lib/yaml/lib', 'lib/antlr3')
     
     def options(self, parser, env=os.environ):
         super(NoseGAE, self).options(parser, env)
@@ -118,10 +118,10 @@ class NoseGAE(Plugin):
         self.hook = Hook(sys.modules)
         sys.meta_path = [self.hook]
         # set up allowed file access paths
-        paths = [self._path]
+        paths = []
         if self._gae_path:
             paths.append(self._gae_path)
-        dev_appserver.FakeFile.SetAllowedPaths(paths)
+        dev_appserver.FakeFile.SetAllowedPaths(self._path, paths)
 
     def _setup_shared_modules(self):
         mods = self._gae['dev_appserver'].SetupSharedModules(sys.modules)
