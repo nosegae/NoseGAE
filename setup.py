@@ -3,28 +3,25 @@ from setuptools import setup
 DESCRIPTION = """\
 NoseGAE: nose plugin for Google App Engine testing\
 """
-
 LONG_DESCRIPTION = open('docs/readme.html', 'r').read()
-
-CLASSIFIERS = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    ("License :: OSI Approved :: GNU Library or "
-     "Lesser General Public License (LGPL)"),
-    "Topic :: Software Development :: Testing"
-    ]
 VERSION = '0.1.4'
-AUTHOR = 'Jason Pellerin'
-AUTHOR_EMAIL = 'jpellerin@gmail.com'
 
 setup(
     name='NoseGAE',
     version=VERSION,
-    author=AUTHOR,
-    author_email=AUTHOR_EMAIL,
+    author="Jason Pellerin",
+    author_email="jpellerin@gmail.com",
+    maintainer="Kumar McMillan",
+    maintainer_email="kumar.mcmillan@gmail.com",
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
-    classifiers=CLASSIFIERS,
+    classifiers=[
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Developers",
+        ("License :: OSI Approved :: GNU Library or "
+         "Lesser General Public License (LGPL)"),
+        "Topic :: Software Development :: Testing"
+        ],
     url='http://code.google.com/p/nose-gae/',
     license='LGPL License',
     entry_points = {
