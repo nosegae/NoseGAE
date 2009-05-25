@@ -82,6 +82,10 @@ class NoseGAE(Plugin):
             self.enabled = False
             warn("Google App Engine not found in %s" % options.gae_lib_root,
                  RuntimeWarning)
+        if sys.version_info[0:2] < (2,5):
+            raise EnvironmentError(
+                "Python version must be 2.5 or greater, like the Google App Engine environment.  "
+                "Tests are running with: %s" % sys.version)
                         
     def begin(self):
         args = self._gae['DEFAULT_ARGS']
