@@ -1,3 +1,8 @@
+0.1.4
+
+- Added support for Google App Engine SDK 1.1.9 (#18).  Thanks to Mahmoud Arram
+  and hackerblinks for patches.
+
 0.1.3
 
 - Fixed bug in handling of modules shared between sandboxed and
