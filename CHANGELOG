@@ -2,6 +2,8 @@
 
 - Added support for Google App Engine SDK 1.1.9 (#18).  Thanks to Mahmoud Arram
   and hackerblinks for patches.
+- Fixed a path issue that causes ImportError on Windows (#19).  Thanks to kveretennicov 
+  for the patch.
 - There is a more informative error now if tests run with something lower than 
   Python 2.5 (#14).
 
