@@ -3,7 +3,15 @@ from setuptools import setup
 DESCRIPTION = """\
 NoseGAE: nose plugin for Google App Engine testing\
 """
-LONG_DESCRIPTION = open('docs/readme.html', 'r').read()
+LONG_DESCRIPTION = """\
+Basic usage::
+    
+    $ cd your/app
+    $ nosetests --with-gae
+
+See http://farmdev.com/projects/nosegae/ for complete documentation or open docs/readme.html after downloading the package.
+
+"""
 VERSION = '0.1.4'
 
 setup(
