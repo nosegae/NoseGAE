@@ -86,6 +86,14 @@ class NoseGAE(Plugin):
             raise EnvironmentError(
                 "Python version must be 2.5 or greater, like the Google App Engine environment.  "
                 "Tests are running with: %s" % sys.version)
+        
+        # As of SDK 1.2.5 the dev_appserver.py aggressively adds some logging handlers.
+        # This removes the handlers but note that Nose will still capture logging and 
+        # report it during failures.  See Issue 25 for more info.
+        rootLogger = logging.getLogger()
+        for handler in rootLogger.handlers:
+            if isinstance(handler, logging.StreamHandler):
+                rootLogger.removeHandler(handler)
                         
     def begin(self):
         args = self._gae['DEFAULT_ARGS']

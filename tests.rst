@@ -78,3 +78,32 @@ module from a sandboxed package.
    <BLANKLINE>
    OK
 ..
+
+Test that logging still works
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+After SDK 1.2.5 dev_appserver got a bit more aggressive about adding log handlers.
+NoseGAE has to silence the logs and this makes sure logging still works from apps.
+See Issue 25 for details.  NOTE: I'm not sure what the "strop" import error is about.
+
+.. shell :: nosetests -v --with-gae
+   :cwd: support/app_with_logging
+   :post: cleanup
+   :stderr:
+
+   tests.test.test_that_fails ... FAIL
+   <BLANKLINE>
+   ======================================================================
+   FAIL: tests.test.test_that_fails
+   ----------------------------------------------------------------------
+   Traceback (most recent call last):
+   ...
+   AssertionError: this fails so that logging output can be inspected
+   root: DEBUG: Could not import "strop": Disallowed C-extension or built-in module
+   root: INFO: I saw a penguin at the zoo and it told me a secret.
+   <BLANKLINE>
+   ----------------------------------------------------------------------
+   Ran 1 test in ...s
+   <BLANKLINE>
+   FAILED (failures=1) 
+..

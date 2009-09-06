@@ -1,3 +1,9 @@
+0.1.5
+
+- Worked around SDK 1.2.5's way of aggressively adding logging handlers (#25). 
+  Note that this still allows Nose to capture and report your app's log messages.
+  Thanks to Jason H. Smith for the bug report and patch.
+
 0.1.4
 
 - Added support for Google App Engine SDK 1.1.9 (#18).  Thanks to Mahmoud Arram
