@@ -40,6 +40,11 @@ class NoseGAE(Plugin):
             help='Set the path to the GAE datastore to use in tests. '
             'Note that when using an existing datastore directory, the '
             'datastore will not be cleared before testing begins.')
+        parser.add_option(
+            '--without-sandbox', default=True, action='store_false', dest='sandbox_enabled',
+            help='Enable this flag if you want to run your tests without ' 
+            'import module sandbox. This is most useful when you have a '
+            'conflicting nose plugin (such as coverage).')
 
     def configure(self, options, config):
         super(NoseGAE, self).configure(options, config)
@@ -63,6 +68,9 @@ class NoseGAE(Plugin):
             self._data_path = os.path.join(tempfile.gettempdir(),
                                            'nosegae.datastore')
             self._temp_data = True
+        
+        self.sandbox_enabled = options.sandbox_enabled 
+        
         try:
             from google.appengine.tools import dev_appserver
             from google.appengine.tools.dev_appserver_main import \
@@ -127,6 +135,11 @@ class NoseGAE(Plugin):
             sandbox_root = self._path
             testMatch = self.config.testMatch
             module_dict = self._setup_shared_modules()
+            
+            def should_sandbox(hook, *args, **kwargs):
+                if self.sandbox_enabled:
+                    return super(Hook, hook).should_sandbox(*args, **kwargs)
+        
         self.hook = Hook(sys.modules)
         sys.meta_path = [self.hook]
         # set up allowed file access paths

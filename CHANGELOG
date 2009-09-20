@@ -1,3 +1,8 @@
+0.1.6
+
+- Added option --without-sandbox so that import hooks can be bypassed to 
+  use coverage and other edge case modules.  Patch contributed by jgeewax (#26)
+
 0.1.5
 
 - Worked around SDK 1.2.5's way of aggressively adding logging handlers (#25). 

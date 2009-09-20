@@ -605,6 +605,9 @@ Engine datastore and other Google App Engine libraries.</p>
 <p>For this reason, <strong>file access is not restricted</strong> in the same way as it
 is under GAE, because it is impossible to differentiate application code file
 access from test code file access.</p>
+<p>However, this means that some things like profiling or Nose's --coverage option
+will not work without some hacks.  If you run into these issues you can pass in
+the option --without-sandbox to turn off the GAE import hook simulation.</p>
 </div>
 </div>
 </body>

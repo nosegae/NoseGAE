@@ -12,7 +12,7 @@ Basic usage::
 See http://farmdev.com/projects/nosegae/ for complete documentation or open docs/readme.html after downloading the package.
 
 """
-VERSION = '0.1.5'
+VERSION = '0.1.6'
 
 setup(
     name='NoseGAE',

@@ -175,6 +175,10 @@ For this reason, **file access is not restricted** in the same way as it
 is under GAE, because it is impossible to differentiate application code file
 access from test code file access.
 
+However, this means that some things like profiling or Nose's --coverage option 
+will not work without some hacks.  If you run into these issues you can pass in 
+the option --without-sandbox to turn off the GAE import hook simulation.
+
 .. _nose : http://somethingaboutorange.com/mrl/projects/nose/
 .. _`google app engine` : http://code.google.com/appengine/
 .. _wsgi : http://www.wsgi.org/wsgi
