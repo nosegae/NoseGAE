@@ -21,7 +21,7 @@ class NoseGAE(Plugin):
     restricted when running under GAE.
     """
     name = 'gae'
-    lib_dirs = ('.', 'lib/django', 'lib/webob', 'lib/yaml/lib', 'lib/antlr3')
+    lib_dirs = ('.', 'lib/django', 'lib/webob', 'lib/yaml/lib', 'lib/antlr3', 'lib/ipaddr')
     
     def options(self, parser, env=os.environ):
         super(NoseGAE, self).options(parser, env)
