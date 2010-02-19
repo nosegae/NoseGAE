@@ -79,14 +79,14 @@ Without NoseGAE, the doctests fail.
    :post: cleanup
    :stderr:
 
-   Failure: ImportError (No module named google.appengine.ext) ... ERROR
+   Failure: ImportError (No module named appengine.ext) ... ERROR
    <BLANKLINE>
    ======================================================================
-   ERROR: Failure: ImportError (No module named google.appengine.ext)
+   ERROR: Failure: ImportError (No module named appengine.ext)
    ----------------------------------------------------------------------
    Traceback (most recent call last):
    ...
-   ImportError: No module named google.appengine.ext
+   ImportError: No module named appengine.ext
    <BLANKLINE>
    ----------------------------------------------------------------------
    Ran 1 test in ...s

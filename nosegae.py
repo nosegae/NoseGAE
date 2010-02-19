@@ -21,7 +21,6 @@ class NoseGAE(Plugin):
     restricted when running under GAE.
     """
     name = 'gae'
-    lib_dirs = ('.', 'lib/django', 'lib/webob', 'lib/yaml/lib', 'lib/antlr3', 'lib/ipaddr')
     
     def options(self, parser, env=os.environ):
         super(NoseGAE, self).options(parser, env)
@@ -57,8 +56,7 @@ class NoseGAE(Plugin):
             self._path = config.workingDir
         if options.gae_lib_root is not None:
             root = self._gae_path = options.gae_lib_root
-            for d in self.lib_dirs:
-                sys.path.insert(0, os.path.join(root, d))
+            sys.path.append(root)
         else:
             self._gae_path = None
         if options.gae_data is not None:
@@ -72,6 +70,17 @@ class NoseGAE(Plugin):
         self.sandbox_enabled = options.sandbox_enabled 
         
         try:
+            if 'google' in sys.modules:
+                # make sure an egg (e.g. protobuf) is not cached 
+                # with the wrong path:
+                del sys.modules['google']
+            saved_path = [p for p in sys.path]
+            # import the pseudo dev_appserver (which is really a script)
+            # and let it add 3rd party libraries:
+            from dev_appserver import fix_sys_path
+            fix_sys_path() # wipes out sys.path
+            sys.path.extend(saved_path) # put back our previous path
+            
             from google.appengine.tools import dev_appserver
             from google.appengine.tools.dev_appserver_main import \
                 DEFAULT_ARGS, ARG_CLEAR_DATASTORE, ARG_LOG_LEVEL, \
@@ -88,8 +97,9 @@ class NoseGAE(Plugin):
             import django
         except ImportError, e:
             self.enabled = False
-            warn("Google App Engine not found in %s" % options.gae_lib_root,
-                 RuntimeWarning)
+            raise
+            # warn("Google App Engine not found in %s" % options.gae_lib_root,
+            #      RuntimeWarning)
         if sys.version_info[0:2] < (2,5):
             raise EnvironmentError(
                 "Python version must be 2.5 or greater, like the Google App Engine environment.  "
