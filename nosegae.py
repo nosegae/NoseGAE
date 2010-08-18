@@ -120,6 +120,7 @@ class NoseGAE(Plugin):
         hs_path = self._gae['ARG_HISTORY_PATH']
         dev_appserver = self._gae['dev_appserver']
         gae_opts = args.copy()
+        gae_opts["root_path"] = self._path
         gae_opts[clear] = self._temp_data
         gae_opts[ds_path] = self._data_path
         gae_opts[hs_path] = os.path.join(tempfile.gettempdir(),

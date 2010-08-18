@@ -107,3 +107,24 @@ See Issue 25 for details.  NOTE: I'm not sure what the "strop" import error is a
    <BLANKLINE>
    FAILED (failures=1) 
 ..
+
+
+Issue 42 - Task Queues
+^^^^^^^^^^^^^^^^^^^^^^
+
+Create a test outside the app-engine path using some taskqueue facility (for e.g. a task queue with another name than 'default'). Running those tests with nose even with --gae-application set correctly they will fail, telling you that said queue isn't existing.
+
+Without the fix in NoseGAE which involves setting up the root path for queue storage, the UnknownQueueError exception will be raised.
+
+.. shell :: nosetests-2.5 -v --with-gae
+   :cwd: support/issue42_task-queue
+   :post: cleanup
+   :stderr:
+
+   test.test_index ... ok
+   <BLANKLINE>
+   ----------------------------------------------------------------------
+   Ran 1 test in ...s
+   <BLANKLINE>
+   OK
+..
