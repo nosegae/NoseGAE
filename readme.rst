@@ -67,7 +67,7 @@ App Engine datastore isn't available. However, since the NoseGAE
 plugin sets up the development environment around your test run, you
 can use models directly in your tests.
 
-Consider a simple models file that includes some doctests:
+Consider a simple models.py file that includes some doctests:
 
 .. include:: support/pets/models.py
    :literal:
