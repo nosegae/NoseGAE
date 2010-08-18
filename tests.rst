@@ -128,3 +128,22 @@ Without the fix in NoseGAE which involves setting up the root path for queue sto
    <BLANKLINE>
    OK
 ..
+
+Issue 13 - users.get_current_user() not working
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Create an app that calls users.get_current_user() -- it fails because the stubs did not set up the environ.
+
+.. shell :: nosetests-2.5 -v --with-gae
+   :cwd: support/issue13-get_current_user
+   :post: cleanup
+   :stderr:
+
+   test.test_index ... ok
+   <BLANKLINE>
+   ----------------------------------------------------------------------
+   Ran 1 test in ...s
+   <BLANKLINE>
+   OK
+..
+
