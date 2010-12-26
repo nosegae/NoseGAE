@@ -1,6 +1,6 @@
 import wsgiref.handlers
 from google.appengine.ext import webapp
-from google.appengine.api.labs import taskqueue
+from google.appengine.api import taskqueue
 
 class Hello(webapp.RequestHandler):
     def get(self):

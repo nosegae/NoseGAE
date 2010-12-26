@@ -182,3 +182,18 @@ the option --without-sandbox to turn off the GAE import hook simulation.
 .. _nose : http://somethingaboutorange.com/mrl/projects/nose/
 .. _`google app engine` : http://code.google.com/appengine/
 .. _wsgi : http://www.wsgi.org/wsgi
+
+Developers
+==========
+
+To work on NoseGAE you'll need some dependencies.  Unfortunately, the Google App Engine SDK makes virtualenv unusable so you either have to pollute your global Python or build a custom Python 2.5 interpreter for use with NoseGAE (recommended).
+
+* Install setuptools
+* easy_install Nose trestle WebTest
+
+Run the tests::
+
+  # Set this to the top level dir, the one with the bin dir in it:
+  export PY25_ROOT=/usr/local/python2.5.5-app-engine
+  ./run_tests.sh
+
