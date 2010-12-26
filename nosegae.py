@@ -95,6 +95,12 @@ class NoseGAE(Plugin):
             import webob
             import yaml
             import django
+            
+            try:
+                import webtest
+            except ImportError:
+                pass
+            
         except ImportError, e:
             self.enabled = False
             raise
@@ -161,8 +167,9 @@ class NoseGAE(Plugin):
 
     def _setup_shared_modules(self):
         mods = self._gae['dev_appserver'].SetupSharedModules(sys.modules)
-        mods.update(dict((name, mod) for name, mod in sys.modules.items()
-                         if name.startswith('nose')))
+        for name in sys.modules:
+            if name.startswith('nose') or name.startswith('webtest'):
+                mods[name] = sys.modules[name]
         return mods
         
         
@@ -216,6 +223,7 @@ class HookMixin(object):
         self.dev_appserver.ClearAllButEncodingsModules(sys.modules)
         # restore shared modules (see issue #2)
         sys.modules.update(self.module_dict)
+        
         if hasattr(sys, 'path_importer_cache'):
             sys.path_importer_cache.clear()
     
