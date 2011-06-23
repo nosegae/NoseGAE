@@ -158,7 +158,6 @@ When run with NoseGAE, it will fail, as it should.
    ----------------------------------------------------------------------
    Traceback (most recent call last):
    ...
-   AttributeError: 'module' object has no attribute 'gethostbyname'
    <BLANKLINE>
    ----------------------------------------------------------------------
    Ran 1 test in ...s

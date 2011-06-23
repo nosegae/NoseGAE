@@ -157,7 +157,7 @@ class NoseGAE(Plugin):
                 if self.sandbox_enabled:
                     return super(Hook, hook).should_sandbox(*args, **kwargs)
         
-        self.hook = Hook(sys.modules)
+        self.hook = Hook(sys.modules, self._path)
         sys.meta_path = [self.hook]
         # set up allowed file access paths
         paths = []

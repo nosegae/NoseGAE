@@ -99,7 +99,7 @@ See Issue 25 for details.  NOTE: I'm not sure what the "strop" import error is a
    Traceback (most recent call last):
    ...
    AssertionError: this fails so that logging output can be inspected
-   root: DEBUG: Could not import "strop": Disallowed C-extension or built-in module
+   ...
    root: INFO: I saw a penguin at the zoo and it told me a secret.
    <BLANKLINE>
    ----------------------------------------------------------------------
