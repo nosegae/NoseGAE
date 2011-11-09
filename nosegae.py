@@ -94,7 +94,8 @@ class NoseGAE(Plugin):
             # prefill these into sys.modules
             import webob
             import yaml
-            import django
+            # (removed since using this causes non-default django version to break)
+            # import django 
             
             try:
                 import webtest
@@ -131,9 +132,9 @@ class NoseGAE(Plugin):
         gae_opts[ds_path] = self._data_path
         gae_opts[hs_path] = os.path.join(tempfile.gettempdir(),
                                          'nosegae.datastore.history')
-        config, _junk = dev_appserver.LoadAppConfig(self._path, {})
+        config, _explicit_matcher, from_cache = dev_appserver.LoadAppConfig(self._path, {})
         dev_appserver.SetupStubs(config.application, **gae_opts)
-        self._install_hook(dev_appserver.HardenedModulesHook)
+        self._install_hook(dev_appserver.HardenedModulesHook, config)
         # dev_appserver.HardenedModulesHook.ENABLE_LOGGING = True
 
     def beforeImport(self, filename, module):
@@ -145,7 +146,7 @@ class NoseGAE(Plugin):
         if self.hook.sandbox == module:
             self.hook.exit_sandbox()
                      
-    def _install_hook(self, cls):
+    def _install_hook(self, cls, config):
         dev_appserver = self._gae['dev_appserver']
         class Hook(HookMixin, cls):
             dev_appserver = self._gae['dev_appserver']
@@ -157,7 +158,7 @@ class NoseGAE(Plugin):
                 if self.sandbox_enabled:
                     return super(Hook, hook).should_sandbox(*args, **kwargs)
         
-        self.hook = Hook(sys.modules, self._path)
+        self.hook = Hook(config, sys.modules, self._path)
         sys.meta_path = [self.hook]
         # set up allowed file access paths
         paths = []
