@@ -44,7 +44,7 @@ application under test and call it directly, without having to pass
 through the dev app server. And that's all you need to do for basic
 functional testing.
 
-.. shell :: nosetests-2.5 -v --with-gae
+.. shell :: nosetests -v --with-gae
    :cwd: support/helloworld
    :post: cleanup
    :stderr:
@@ -74,7 +74,7 @@ Consider a simple models.py file that includes some doctests:
 
 Without NoseGAE, the doctests fail.
 
-.. shell :: nosetests-2.5 -v --with-doctest
+.. shell :: nosetests -v --with-doctest
    :cwd: support/pets
    :post: cleanup
    :stderr:
@@ -96,7 +96,7 @@ Without NoseGAE, the doctests fail.
      
 With NoseGAE, they pass.
 
-.. shell :: nosetests-2.5 -v --with-doctest --with-gae
+.. shell :: nosetests -v --with-doctest --with-gae
    :cwd: support/pets
    :post: cleanup
    :stderr:
@@ -131,7 +131,7 @@ With a simple functional test:
 This test will pass when run outside of the Google App Engine
 environment.
  
-.. shell :: nosetests-2.5 -v
+.. shell :: nosetests -v
    :cwd: support/bad_app
    :post: cleanup
    :stderr:
@@ -146,7 +146,7 @@ environment.
     
 When run with NoseGAE, it will fail, as it should.
 
-.. shell :: nosetests-2.5 -v --with-gae
+.. shell :: nosetests -v --with-gae
    :cwd: support/bad_app
    :post: cleanup
    :stderr:

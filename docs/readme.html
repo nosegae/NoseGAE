@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.11: http://docutils.sourceforge.net/" />
 <title>NoseGAE: Test support for Google Application Engine</title>
 <style type="text/css">
 
@@ -416,7 +416,7 @@ application under test and call it directly, without having to pass
 through the dev app server. And that's all you need to do for basic
 functional testing.</p>
 <pre class="literal-block">
-<tt class="request method docutils literal"><span class="pre">nosetests-2.5</span> <span class="pre">-v</span> <span class="pre">--with-gae</span></tt>
+<tt class="request method docutils literal">nosetests <span class="pre">-v</span> <span class="pre">--with-gae</span></tt>
 </pre>
 <pre class="response pass literal-block">
 test.test_index ... ok
@@ -488,7 +488,7 @@ class Pet(db.Model):
 </pre>
 <p>Without NoseGAE, the doctests fail.</p>
 <pre class="literal-block">
-<tt class="request method docutils literal"><span class="pre">nosetests-2.5</span> <span class="pre">-v</span> <span class="pre">--with-doctest</span></tt>
+<tt class="request method docutils literal">nosetests <span class="pre">-v</span> <span class="pre">--with-doctest</span></tt>
 </pre>
 <pre class="response pass literal-block">
 Failure: ImportError (No module named google.appengine.ext) ... ERROR
@@ -508,7 +508,7 @@ FAILED (errors=1)
 <!--  -->
 <p>With NoseGAE, they pass.</p>
 <pre class="literal-block">
-<tt class="request method docutils literal"><span class="pre">nosetests-2.5</span> <span class="pre">-v</span> <span class="pre">--with-doctest</span> <span class="pre">--with-gae</span></tt>
+<tt class="request method docutils literal">nosetests <span class="pre">-v</span> <span class="pre">--with-doctest</span> <span class="pre">--with-gae</span></tt>
 </pre>
 <pre class="response pass literal-block">
 Doctest: models.Pet ... ok
@@ -569,7 +569,7 @@ def test_index_calls_gethostbyname():
 <p>This test will pass when run outside of the Google App Engine
 environment.</p>
 <pre class="literal-block">
-<tt class="request method docutils literal"><span class="pre">nosetests-2.5</span> <span class="pre">-v</span></tt>
+<tt class="request method docutils literal">nosetests <span class="pre">-v</span></tt>
 </pre>
 <pre class="response pass literal-block">
 test.test_index_calls_gethostbyname ... ok
@@ -582,7 +582,7 @@ OK
 <!--  -->
 <p>When run with NoseGAE, it will fail, as it should.</p>
 <pre class="literal-block">
-<tt class="request method docutils literal"><span class="pre">nosetests-2.5</span> <span class="pre">-v</span> <span class="pre">--with-gae</span></tt>
+<tt class="request method docutils literal">nosetests <span class="pre">-v</span> <span class="pre">--with-gae</span></tt>
 </pre>
 <pre class="response pass literal-block">
 test.test_index_calls_gethostbyname ... ERROR

@@ -131,6 +131,11 @@ class NoseGAE(Plugin):
         dev_appserver = self._gae['dev_appserver']
         gae_opts = args.copy()
         gae_opts["root_path"] = self._path
+
+        gae_opts["use_sqlite"] = True
+        gae_opts["skip_sdk_update_check"] = True
+        gae_opts["disable_console"] = True
+        gae_opts["high_replication"] = True
         gae_opts[clear] = self._temp_data
         gae_opts[ds_path] = self._data_path
         gae_opts[hs_path] = os.path.join(tempfile.gettempdir(),
