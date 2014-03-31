@@ -81,7 +81,10 @@ class NoseGAE(Plugin):
             fix_sys_path() # wipes out sys.path
             sys.path.extend(saved_path) # put back our previous path
             
-            from google.appengine.tools import dev_appserver
+            try:
+                from google.appengine.tools import dev_appserver
+            except ImportError:
+                from google.appengine.tools import old_dev_appserver as dev_appserver
             from google.appengine.tools.dev_appserver_main import \
                 DEFAULT_ARGS, ARG_CLEAR_DATASTORE, ARG_LOG_LEVEL, \
                 ARG_DATASTORE_PATH, ARG_HISTORY_PATH
