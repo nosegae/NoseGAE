@@ -4,7 +4,6 @@ import optparse
 import unittest
 import mock
 from nose.config import Config
-from nose.tools import raises
 from nosegae import NoseGAE
 
 def mktest():    
