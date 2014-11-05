@@ -185,7 +185,7 @@ the option --without-sandbox to turn off the GAE import hook simulation.
 Developers
 ==========
 
-To work on NoseGAE you'll need some dependencies.  Unfortunately, the Google App Engine SDK makes virtualenv unusable so you either have to pollute your global Python or build a custom Python 2.5 interpreter for use with NoseGAE (recommended).
+To work on NoseGAE you'll need some dependencies.  Unfortunately, the Google App Engine SDK makes virtualenv unusable so you either have to pollute your global Python or build a custom Python 2.5 or Python 2.7 interpreter for use with NoseGAE (recommended).
 
 * Install setuptools
 * easy_install Nose trestle WebTest
@@ -195,4 +195,41 @@ Run the tests::
   # Set this to the top level dir, the one with the bin dir in it:
   export PY25_ROOT=/usr/local/python2.5.5-app-engine
   ./run_tests.sh
+  
+Alternate installation with pip: 
 
+* pip install nose nose-gae
+* export PY25_ROOT=/usr/local/python2.5.5-app-engine
+            OR 
+* export PY27_ROOT=/usr/local/python2.7.8-app-engine
+
+Alternate installation in virtualenv with pip: 
+
+* Navigate to the directory in which you have your virtual environment set up (usually the root of the project), then to the bin folder, then ./pip install nose, then nosegae
+* E.G. /home/user/location/of/your/project/root/env/bin
+
+Downloading/unpacking nose
+  Downloading nose-1.3.4.tar.gz (277kB): 277kB downloaded
+  Running setup.py egg_info for package nose
+    
+    no previously-included directories found matching 'doc/.build'
+Installing collected packages: nose
+  Running setup.py install for nose
+    
+    no previously-included directories found matching 'doc/.build'
+    Installing nosetests script to /home/user/location/of/your/project/root/env/bin
+    Installing nosetests-2.7 script to /home/user/location/of/your/project/root/env/bin
+Successfully installed nose
+Cleaning up...
+
+* ./pip install nosegae
+Downloading/unpacking nosegae
+  Downloading NoseGAE-0.2.1.tar.gz
+  Running setup.py egg_info for package nosegae
+    
+Requirement already satisfied (use --upgrade to upgrade): nose>=0.10.1 in /home/user/location/of/your/project/root/env/lib/python2.7/site-packages (from nosegae)
+Installing collected packages: nosegae
+  Running setup.py install for nosegae
+    
+Successfully installed nosegae
+Cleaning up...
