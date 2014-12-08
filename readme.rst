@@ -16,6 +16,21 @@ When the plugin is installed, you can activate it by using the
 for setting the path to the Google App Engine python library, if it is
 not in the standard location of ``/usr/local/google_appengine``.
 
+Installation
+============
+
+Pycharm
+-------
+NoseGAE can be used with PyCharm, and added as follows: 
+Open PyCharm's Settings menu, then Project Interpreter, then click the bright green + in the upper right.
+Search for NoseGAE. 
+
+NoseGAE: nose plugin for Google App Engine testing (sdk 1.9.1+)
+Version
+0.2.1
+Author
+Josh Johnston mailto:johnston.joshua+nosegae@gmail.com http://code.google.com/p/nose-gae/
+
 What does it do?
 ================
 
@@ -195,4 +210,3 @@ Run the tests::
   # Set this to the top level dir, the one with the bin dir in it:
   export PY25_ROOT=/usr/local/python2.5.5-app-engine
   ./run_tests.sh
-
