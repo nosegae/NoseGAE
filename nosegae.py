@@ -21,7 +21,7 @@ class NoseGAE(Plugin):
     restricted when running under GAE.
     """
     name = 'gae'
-    
+
     def options(self, parser, env=os.environ):
         super(NoseGAE, self).options(parser, env)
         parser.add_option(
@@ -41,7 +41,7 @@ class NoseGAE(Plugin):
             'datastore will not be cleared before testing begins.')
         parser.add_option(
             '--without-sandbox', default=True, action='store_false', dest='sandbox_enabled',
-            help='Enable this flag if you want to run your tests without ' 
+            help='Enable this flag if you want to run your tests without '
             'import module sandbox. This is most useful when you have a '
             'conflicting nose plugin (such as coverage).')
 
@@ -66,12 +66,12 @@ class NoseGAE(Plugin):
             self._data_path = os.path.join(tempfile.gettempdir(),
                                            'nosegae.datastore')
             self._temp_data = True
-        
-        self.sandbox_enabled = options.sandbox_enabled 
-        
+
+        self.sandbox_enabled = options.sandbox_enabled
+
         try:
             if 'google' in sys.modules:
-                # make sure an egg (e.g. protobuf) is not cached 
+                # make sure an egg (e.g. protobuf) is not cached
                 # with the wrong path:
                 del sys.modules['google']
             saved_path = [p for p in sys.path]
@@ -80,31 +80,25 @@ class NoseGAE(Plugin):
             from dev_appserver import fix_sys_path
             fix_sys_path() # wipes out sys.path
             sys.path.extend(saved_path) # put back our previous path
-            
-            try:
-                from google.appengine.tools import dev_appserver
-            except ImportError:
-                from google.appengine.tools import old_dev_appserver as dev_appserver
-            from google.appengine.tools.dev_appserver_main import \
-                DEFAULT_ARGS, ARG_CLEAR_DATASTORE, ARG_LOG_LEVEL, \
-                ARG_DATASTORE_PATH, ARG_HISTORY_PATH
-            self._gae = {'dev_appserver': dev_appserver,
-                         'ARG_LOG_LEVEL': ARG_LOG_LEVEL,
-                         'ARG_CLEAR_DATASTORE': ARG_CLEAR_DATASTORE,
-                         'ARG_DATASTORE_PATH': ARG_DATASTORE_PATH,
-                         'ARG_HISTORY_PATH': ARG_HISTORY_PATH,
-                         'DEFAULT_ARGS': DEFAULT_ARGS}
+
+            import wrapper_util
+            _paths = wrapper_util.Paths(root)
+            sys.path = sys.path + _paths.script_paths('dev_appserver.py')
+
+            from google.appengine.tools.devappserver2 import devappserver2
+            self._gae = {'devappserver2': devappserver2.DevelopmentServer(),
+                         'parser': devappserver2.create_command_line_parser()}
             # prefill these into sys.modules
             import webob
             import yaml
             # (removed since using this causes non-default django version to break)
-            # import django 
-            
+            # import django
+
             try:
                 import webtest
             except ImportError:
                 pass
-            
+
         except ImportError, e:
             self.enabled = False
             raise
@@ -114,46 +108,27 @@ class NoseGAE(Plugin):
             raise EnvironmentError(
                 "Python version must be 2.5 or greater, like the Google App Engine environment.  "
                 "Tests are running with: %s" % sys.version)
-        
+
         # As of SDK 1.2.5 the dev_appserver.py aggressively adds some logging handlers.
-        # This removes the handlers but note that Nose will still capture logging and 
+        # This removes the handlers but note that Nose will still capture logging and
         # report it during failures.  See Issue 25 for more info.
         rootLogger = logging.getLogger()
         for handler in rootLogger.handlers:
             if isinstance(handler, logging.StreamHandler):
                 rootLogger.removeHandler(handler)
-                        
+
     def begin(self):
-        args = self._gae['DEFAULT_ARGS']
-        clear = self._gae['ARG_CLEAR_DATASTORE']
-        ds_path = self._gae['ARG_DATASTORE_PATH']
-        hs_path = self._gae['ARG_HISTORY_PATH']
-        dev_appserver = self._gae['dev_appserver']
-        gae_opts = args.copy()
-        gae_opts["root_path"] = self._path
+        devappserver2 = self._gae['devappserver2']
+        parser = self._gae['parser']
+        gae_opts = {}
+        gae_opts['root_path'] = self._path
+        devappserver2.start(parser.parse_args([
+            '--skip_sdk_update_check=True',
+            self._path]))
 
-        gae_opts["use_sqlite"] = True
-        gae_opts["skip_sdk_update_check"] = True
-        gae_opts["disable_console"] = True
-        gae_opts["high_replication"] = True
-        gae_opts[clear] = self._temp_data
-        gae_opts[ds_path] = self._data_path
-        gae_opts[hs_path] = os.path.join(tempfile.gettempdir(),
-                                         'nosegae.datastore.history')
-        config, _explicit_matcher, from_cache = dev_appserver.LoadAppConfig(self._path, {})
-        dev_appserver.SetupStubs(config.application, **gae_opts)
-        self._install_hook(dev_appserver.HardenedModulesHook, config)
-        # dev_appserver.HardenedModulesHook.ENABLE_LOGGING = True
+    def finalize(self, result):
+        self._gae['devappserver2'].stop()
 
-    def beforeImport(self, filename, module):
-        if not self.hook.sandbox:
-            if self.hook.should_sandbox(module, filename):
-                self.hook.enter_sandbox(module)
-
-    def afterImport(self, filename, module):
-        if self.hook.sandbox == module:
-            self.hook.exit_sandbox()
-                     
     def _install_hook(self, cls, config):
         dev_appserver = self._gae['dev_appserver']
         class Hook(HookMixin, cls):
@@ -161,11 +136,11 @@ class NoseGAE(Plugin):
             sandbox_root = self._path
             testMatch = self.config.testMatch
             module_dict = self._setup_shared_modules()
-            
+
             def should_sandbox(hook, *args, **kwargs):
                 if self.sandbox_enabled:
                     return super(Hook, hook).should_sandbox(*args, **kwargs)
-        
+
         self.hook = Hook(config, sys.modules, self._path)
         sys.meta_path = [self.hook]
         # set up allowed file access paths
@@ -180,8 +155,8 @@ class NoseGAE(Plugin):
             if name.startswith('nose') or name.startswith('webtest'):
                 mods[name] = sys.modules[name]
         return mods
-        
-        
+
+
 class HookMixin(object):
     """
     Combine this mixin with a meta_path importer (such as
@@ -211,7 +186,7 @@ class HookMixin(object):
             return None
         # sandboxed
         return super(HookMixin, self).find_module(fullname, path)
-    
+
     def load_module(self, fullname):
         # only called when sandboxed
         try:
@@ -232,10 +207,10 @@ class HookMixin(object):
         self.dev_appserver.ClearAllButEncodingsModules(sys.modules)
         # restore shared modules (see issue #2)
         sys.modules.update(self.module_dict)
-        
+
         if hasattr(sys, 'path_importer_cache'):
             sys.path_importer_cache.clear()
-    
+
     def is_sandboxed(self, mod_name):
         return mod_name == self.sandbox
 
@@ -249,7 +224,7 @@ class HookMixin(object):
         sys.modules.update(self._old_modules)
         if hasattr(sys, 'path_importer_cache'):
             sys.path_importer_cache.clear()
-        
+
     def find_mod_path(self, fullname):
         # we really only need the path to the top
         top = fullname.split('.')[0]
