@@ -13,7 +13,7 @@ See http://farmdev.com/projects/nosegae/ for complete documentation
 or open docs/readme.html after downloading the package.
 
 """
-VERSION = '0.3.0'
+VERSION = '0.4.0.dev0'
 
 setup(
     name='NoseGAE',
@@ -31,12 +31,12 @@ setup(
         "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
         "Topic :: Software Development :: Testing"
         ],
-    url='http://code.google.com/p/nose-gae/',
+    url='https://github.com/Trii/NoseGAE',
     license='LGPL License',
     entry_points={
         'nose.plugins.0.10': ['nosegae = nosegae:NoseGAE']
         },
     py_modules=['nosegae'],
-    install_requires=['nose>=0.10.1'],
-    tests_require=['WebTest', 'trestle>=0.2a1', 'Mock']
+    install_requires=['nose>=1.0'],
+    # tests_require=['WebTest', 'trestle>=0.2a1', 'Mock']
     )
