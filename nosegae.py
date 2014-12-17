@@ -92,5 +92,18 @@ class NoseGAE(Plugin):
         # required for queue.yaml so the app knows about the task queue names
         self.testbed.init_taskqueue_stub(root_path=self._app_path)
 
+        # workaround to avoid prospective search complain until there is a proper
+        # testbed stub. see http://stackoverflow.com/questions/16026703/testbed-stub-for-google-app-engine-prospective-search
+        from google.appengine.api.prospective_search.prospective_search_stub \
+            import ProspectiveSearchStub
+        PROSPECTIVE_SEARCH_SERVICE_NAME = 'matcher'
+        testbed.SUPPORTED_SERVICES.append(PROSPECTIVE_SEARCH_SERVICE_NAME)
+        ps_data_file = os.path.join(os.path.split(self._data_path)[0],
+                                    'nosegae.ps')
+        ps_stub = ProspectiveSearchStub(
+            prospective_search_path=ps_data_file,
+            taskqueue_stub=self.testbed.get_stub(testbed.TASKQUEUE_SERVICE_NAME))
+        self.testbed._register_stub(PROSPECTIVE_SEARCH_SERVICE_NAME, ps_stub)
+
     def afterTest(self, *args):
         self.testbed.deactivate()
