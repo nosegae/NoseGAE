@@ -1,3 +1,15 @@
+0.4.0
+
+- Huge rewrite to support dev_appserver2
+- Remove --with-sandbox because it does not work with dev_appserver2
+- Automatically configure a TestBed instance and inject it into the test code
+  for ease of configuration
+
+0.3.0
+
+- Initial dev_appserver2 support for sdk 1.9.17 via Dmitry Sadovnychyi
+  (https://github.com/sadovnychyi/NoseGAE/commit/3452d77cae4e02d536f7eb3907602e3f4ddff16d)
+
 0.2.1
 
 - Updated import for old_dev_appserver for SDK 1.9.1+ (ec4011d2102893569f4f88d7e6c40687cc99754a)

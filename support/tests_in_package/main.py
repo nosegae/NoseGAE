@@ -1,8 +1,5 @@
-import wsgiref.handlers
-from helloworld import application
-        
-def main():
-    wsgiref.handlers.CGIHandler().run(application())
+import webapp2
 
-if __name__ == '__main__':
-    main()
+from helloworld import Hello
+
+app = webapp2.WSGIApplication([('/', Hello)], debug=True)

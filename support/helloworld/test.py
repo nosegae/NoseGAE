@@ -1,8 +1,17 @@
 from webtest import TestApp
-from helloworld import application
+import unittest
+import helloworld
 
-app = TestApp(application())
+app = TestApp(helloworld.app)
 
-def test_index():
-    response = app.get('/')
-    assert 'Hello world!' in str(response)
+
+class HelloWorldTest(unittest.TestCase):
+    def test_index(self):
+        """Tests that the index page for the application
+
+        The page should be served as: Content-Type: text/plain
+        The body content should contain the string: Hello world!
+        """
+        response = app.get('/')
+        self.assertEqual(response.content_type, 'text/plain')
+        self.assertIn('Hello world!', response.body)

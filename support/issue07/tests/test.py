@@ -1,8 +1,8 @@
 from webtest import TestApp
-from helloworld import application
+from main import app
 from nose.tools import eq_
 
-app = TestApp(application())
+app = TestApp(app)
 
 def test_index():
     response = app.get('/')

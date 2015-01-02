@@ -1,19 +1,16 @@
 from setuptools import setup
 
-DESCRIPTION = """\
-NoseGAE: nose plugin for Google App Engine testing\
+DESCRIPTION = """
+NoseGAE: nose plugin for Google App Engine testing
 """
-LONG_DESCRIPTION = """\
-Basic usage::
+LONG_DESCRIPTION = """
+Basic usage:
     
     $ cd your/app
     $ nosetests --with-gae
 
-See http://farmdev.com/projects/nosegae/ for complete documentation
-or open docs/readme.html after downloading the package.
-
 """
-VERSION = '0.3.0'
+VERSION = '0.4.0'
 
 setup(
     name='NoseGAE',
@@ -28,15 +25,15 @@ setup(
         "Development Status :: 4 - Beta",
         "Environment :: Console",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
+        "License :: OSI Approved :: BSD License",
         "Topic :: Software Development :: Testing"
         ],
-    url='http://code.google.com/p/nose-gae/',
-    license='LGPL License',
+    url='https://github.com/Trii/NoseGAE',
+    license='BSD License',
     entry_points={
         'nose.plugins.0.10': ['nosegae = nosegae:NoseGAE']
         },
     py_modules=['nosegae'],
     install_requires=['nose>=0.10.1'],
-    tests_require=['WebTest', 'trestle>=0.2a1', 'Mock']
+    zip_safe=False
     )
