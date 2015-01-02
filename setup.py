@@ -10,7 +10,7 @@ Basic usage:
     $ nosetests --with-gae
 
 """
-VERSION = '0.4.0.dev0'
+VERSION = '0.4.0'
 
 setup(
     name='NoseGAE',
@@ -25,11 +25,11 @@ setup(
         "Development Status :: 4 - Beta",
         "Environment :: Console",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
+        "License :: OSI Approved :: BSD License",
         "Topic :: Software Development :: Testing"
         ],
     url='https://github.com/Trii/NoseGAE',
-    license='LGPL License',
+    license='BSD License',
     entry_points={
         'nose.plugins.0.10': ['nosegae = nosegae:NoseGAE']
         },

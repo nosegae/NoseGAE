@@ -1,6 +1,9 @@
-0.4.0.dev
+0.4.0
 
 - Huge rewrite to support dev_appserver2
+- Remove --with-sandbox because it does not work with dev_appserver2
+- Automatically configure a TestBed instance and inject it into the test code
+  for ease of configuration
 
 0.3.0
 
