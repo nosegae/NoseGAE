@@ -1,7 +1,8 @@
 from webtest import TestApp
-from issue02 import application
+from issue02 import app
 
-app = TestApp(application())
+app = TestApp(app)
+
 
 def test_sys_modules_available():
     response = app.get('/')

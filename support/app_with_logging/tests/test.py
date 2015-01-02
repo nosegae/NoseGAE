@@ -1,10 +1,12 @@
 from webtest import TestApp
-from helloworld import application
-from nose.tools import eq_
+from main import app
 
-app = TestApp(application())
+app = TestApp(app)
+
 
 def test_that_fails():
     response = app.get('/')
-    assert 'Hello world!' in str(response)
-    assert 0, "this fails so that logging output can be inspected"
+    assert response
+
+
+test_that_fails.nosegae_logservice = True

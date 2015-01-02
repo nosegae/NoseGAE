@@ -1,9 +1,15 @@
 from webtest import TestApp
-from helloworld import application
+import unittest
+from helloworld import app
 
-app = TestApp(application())
+app = TestApp(app)
 
-def test_index():
-    # this will call get_current_user()
-    response = app.get('/')
-    assert 'Hello world!' in str(response)
+
+class TestUserService(unittest.TestCase):
+    nosegae_user = True
+    nosegae_user_kwargs = dict(USER_EMAIL='nosegae@example.org')
+
+    def test_index(self):
+        # this will call get_current_user()
+        response = app.get('/')
+        self.assertIn('nosegae@example.org', response.body)
