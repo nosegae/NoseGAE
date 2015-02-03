@@ -2,10 +2,8 @@ from setuptools import setup
 
 DESCRIPTION = "NoseGAE: nose plugin for Google App Engine testing"
 
-VERSION = '0.4.2'
+VERSION = '0.5.0'
 
-with open('README.md') as file:
-    long_description = file.read()
 
 setup(
     name='NoseGAE',
@@ -15,7 +13,6 @@ setup(
     maintainer="Josh Johnston",
     maintainer_email="johnston.joshua+nosegae@gmail.com",
     description=DESCRIPTION,
-    long_description=long_description,
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
