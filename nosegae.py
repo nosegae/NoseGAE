@@ -5,6 +5,22 @@ import tempfile
 from nose.plugins.base import Plugin
 from nose.case import FunctionTestCase
 
+# Solution from
+# http://stackoverflow.com/questions/17583443/what-is-the-correct-way-to-share-package-version-with-setup-py-and-the-package
+from pkg_resources import get_distribution, DistributionNotFound
+
+try:
+    _dist = get_distribution('nosegae')
+    # Normalize case for Windows systems
+    dist_loc = os.path.normcase(_dist.location)
+    here = os.path.normcase(__file__)
+    if not here.startswith(os.path.join(dist_loc, 'nosegae')):
+        # not installed, but there is another version that *is*
+        raise DistributionNotFound
+except DistributionNotFound:
+    __version__ = 'DEVELOPMENT'
+else:
+    __version__ = _dist.version
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +77,11 @@ class NoseGAE(Plugin):
 
         import dev_appserver
         dev_appserver.fix_sys_path()  # add paths to libs specified in app.yaml, etc
+
+        # This file handles some OS compat settings. Most notably the `TZ` stuff
+        # to resolve https://github.com/Trii/NoseGAE/issues/14.
+        # It may need to be removed in the future if Google changes the functionality
+        import google.appengine.tools.os_compat
 
         from google.appengine.tools.devappserver2 import application_configuration
 

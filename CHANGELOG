@@ -1,3 +1,10 @@
+0.4.1
+
+- Fix issue with timezone mismatch discovered by viorelsfetea by importing
+  google.appengine.tools.os_compat which explicitly sets the timezone to UTC
+  so that datetime and time objects created in tests match the ones created
+  in the appengine runtime.
+
 0.4.0
 
 - Huge rewrite to support dev_appserver2
