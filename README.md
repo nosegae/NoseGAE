@@ -29,7 +29,7 @@ your `app.yaml`, and sets the proper paths using `dev_appserver.fix_sys_path()`.
 Consider the simple hello world application in `support/helloworld`:
 
 
-```
+```python
 import webapp2
 from jinja2 import Environment
 
@@ -47,7 +47,7 @@ app = webapp2.WSGIApplication([('/', Hello)], debug=True)
 
 And a simple functional test suite `support/helloworld/test.py` for the application:
 
-```
+```python
 from webtest import TestApp
 import unittest
 import helloworld
@@ -120,7 +120,7 @@ can use models directly in your tests.
 
 Consider the `support/pets/models.py` file that includes some doctests:
 
-```
+```python
 from google.appengine.ext import ndb
 
 class Pet(ndb.Model):
@@ -252,7 +252,7 @@ named `testbed` to the instance of your test class and configures it based upon 
 
 This test uses the assigned `testbed` attribute to manually configure each test.
 
-```
+```python
 class MyTest(unittest.TestCase):
     def test_using_memcache(self):
         """Unit test using memcache"""
@@ -276,7 +276,7 @@ class MyTest(unittest.TestCase):
 The following test case shows how to write a test that uses the datastore stub based on the simple configuration
 method using `nosegae_<stubname>` and `nosegae_<stubname>_kwargs`.
 
-```
+```python
 class DataTest(unittest.TestCase):
     # enable the datastore stub
     nosegae_datastore_v3 = True
@@ -293,7 +293,7 @@ class DataTest(unittest.TestCase):
 This test case uses the `testbed` instance assigned to the function to manually configure any needed stubs.
 See `support/function_manual_config`.
 
-```
+```python
 def test_index():
     # test_index.testbed is assigned by the NoseGAE plugin
     test_index.testbed.init_taskqueue_stub(task_retry_seconds=42, root_path=os.path.dirname(__file__))
@@ -306,7 +306,7 @@ def test_index():
 The following test shows how to use the simple method while passing kwargs to the taskqueue
 stub's initialization method. See `support/issue42_task-queue` for full example code.
  
-```
+```python
 def test_index():
     # Assume the `/` route fires off a task queue and should pass without exceptions
     app = TestApp(app)
@@ -330,7 +330,7 @@ NoseGAE uses the [nose doctest plugin](http://nose.readthedocs.org/en/latest/plu
 a global variable named `testbed` into your doctest scope that contains the current active `TestBed` instance.
 See `support/pets/models.py` for full example.
 
-```
+```python
 class Pet(ndb.Model):
     """The Pet class provides storage for pets.
 
