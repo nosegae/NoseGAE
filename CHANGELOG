@@ -1,3 +1,10 @@
+0.5.1
+
+- Populate os.environ['CURRENT_VERSION_ID'] using devappserver2's built in
+  generation via the 
+  google.appengine.tools.devappserver2.application_configuration.ModuleConfiguration
+  instance that is part of the ApplicationConfiguration's modules list
+
 0.4.1
 
 - Fix issue with timezone mismatch discovered by viorelsfetea by importing
