@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+</head>
+<body>
+<h1 id="nosegae-nose-for-google-app-engine-testing">NoseGAE: Nose for Google App Engine Testing</h1>
+<h2 id="overview">Overview</h2>
+<p>NoseGAE is a <a href="http://nose.readthedocs.org/en/latest/index.html">nose</a> plugin that makes it easier to write functional and unit tests for <a href="https://cloud.google.com/appengine/">Google App Engine</a> applications.</p>
+<ol style="list-style-type: decimal">
+<li><a href="#what-does-it-do">What does it do?</a>
+<ol style="list-style-type: decimal">
+<li><a href="#functional-tests">Functional tests</a></li>
+<li><a href="#unit-tests">Unit tests</a></li>
+</ol></li>
+<li><a href="#configuring-the-testbed">Configuring the TestBed</a>
+<ol style="list-style-type: decimal">
+<li><a href="#class-based-tests">Class Based Tests</a></li>
+<li><a href="#function-tests">Function Tests</a></li>
+<li><a href="#doctest">Doctest</a></li>
+</ol></li>
+<li><a href="#changes-in-0.4.0">Changes in 0.4.0</a></li>
+</ol>
+<h2 id="what-does-it-do">What does it do?</h2>
+<p>NoseGAE sets up the GAE development environment before your test run. This means that you can easily write functional tests for your application without having to actually start the dev server and test over http. The plugin also configures and initializes a TestBed instance, your application_id based off your <code>app.yaml</code>, and sets the proper paths using <code>dev_appserver.fix_sys_path()</code>.</p>
+<h3 id="functional-tests">Functional tests</h3>
+<p>Consider the simple hello world application in <code>support/helloworld</code>:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">import</span> webapp2
+<span class="ch">from</span> jinja2 <span class="ch">import</span> Environment
+
+
+<span class="kw">class</span> Hello(webapp2.RequestHandler):
+    <span class="kw">def</span> get(<span class="ot">self</span>):
+        <span class="ot">self</span>.response.headers[<span class="st">&#39;Content-Type&#39;</span>] = <span class="st">&#39;text/plain&#39;</span>
+        env = Environment()
+        template = env.from_string(<span class="st">&quot;Hello </span><span class="ot">{{</span><span class="st"> greeting </span><span class="ot">}}</span><span class="st">!&quot;</span>)
+        <span class="ot">self</span>.response.out.write(template.render(greeting=<span class="st">&#39;world&#39;</span>))
+
+app = webapp2.WSGIApplication([(<span class="st">&#39;/&#39;</span>, Hello)], debug=<span class="ot">True</span>)</code></pre>
+<p>And a simple functional test suite <code>support/helloworld/test.py</code> for the application:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">from</span> webtest <span class="ch">import</span> TestApp
+<span class="ch">import</span> unittest
+<span class="ch">import</span> helloworld
+
+app = TestApp(helloworld.app)
+
+
+<span class="kw">class</span> HelloWorldTest(unittest.TestCase):
+    <span class="kw">def</span> test_index(<span class="ot">self</span>):
+        <span class="co">&quot;&quot;&quot;Tests that the index page for the application</span>
+
+<span class="co">        The page should be served as: Content-Type: text/plain</span>
+<span class="co">        The body content should contain the string: Hello world!</span>
+<span class="co">        &quot;&quot;&quot;</span>
+        response = app.get(<span class="st">&#39;/&#39;</span>)
+        <span class="ot">self</span>.assertEqual(response.content_type, <span class="st">&#39;text/plain&#39;</span>)
+        <span class="ot">self</span>.assertIn(<span class="st">&#39;Hello world!&#39;</span>, response.body)</code></pre>
+<p>Without NoseGAE, the test fails.</p>
+<pre><code>helloworld$ nosetests --logging-level=ERROR
+E
+======================================================================
+ERROR: Failure: ImportError (No module named webapp2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/Users/Josh/Developer/Github/jj/lib/python2.7/site-packages/nose-1.3.4-py2.7.egg/nose/loader.py&quot;, line 414, in loadTestsFromName
+    addr.filename, addr.module)
+  File &quot;/Users/Josh/Developer/Github/jj/lib/python2.7/site-packages/nose-1.3.4-py2.7.egg/nose/importer.py&quot;, line 47, in importFromPath
+    return self.importFromDir(dir_path, fqname)
+  File &quot;/Users/Josh/Developer/Github/jj/lib/python2.7/site-packages/nose-1.3.4-py2.7.egg/nose/importer.py&quot;, line 94, in importFromDir
+    mod = load_module(part_fqname, fh, filename, desc)
+  File &quot;/Users/Josh/Developer/Github/nosegae/support/helloworld/test.py&quot;, line 2, in &lt;module&gt;
+    import helloworld
+  File &quot;/Users/Josh/Developer/Github/nosegae/support/helloworld/helloworld.py&quot;, line 1, in &lt;module&gt;
+    import webapp2
+ImportError: No module named webapp2
+
+----------------------------------------------------------------------
+Ran 1 test in 0.075s
+
+FAILED (errors=1)</code></pre>
+<p>With NoseGAE, they pass.</p>
+<pre><code>helloworld$ nosetests --logging-level=ERROR --with-gae
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.264s
+
+OK
+</code></pre>
+<h3 id="unit-tests">Unit tests</h3>
+<p>Functional tests are only one kind of test, of course. What if you want to write unit tests for your data models? Normally, you can't use your models at all outside of the dev environment, because the Google App Engine datastore isn't available. However, since the NoseGAE plugin sets up the development environment around your test run, you can use models directly in your tests.</p>
+<p>Consider the <code>support/pets/models.py</code> file that includes some doctests:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">from</span> google.appengine.ext <span class="ch">import</span> ndb
+
+<span class="kw">class</span> Pet(ndb.Model):
+    <span class="co">&quot;&quot;&quot;The Pet class provides storage for pets.</span>
+
+<span class="co">    &gt;&gt;&gt; # initialize testbed stubs</span>
+<span class="co">    &gt;&gt;&gt; testbed.init_memcache_stub()</span>
+<span class="co">    &gt;&gt;&gt; testbed.init_datastore_v3_stub()</span>
+
+<span class="co">    You can create a pet:</span>
+<span class="co">    &gt;&gt;&gt; muffy = Pet(name=u&#39;muffy&#39;, type=u&#39;dog&#39;, breed=u&quot;Shi&#39;Tzu&quot;)</span>
+<span class="co">    &gt;&gt;&gt; muffy # doctest: +ELLIPSIS</span>
+<span class="co">    Pet(name=u&#39;muffy&#39;, type=u&#39;dog&#39;, breed=u&quot;Shi&#39;Tzu&quot;, ...)</span>
+<span class="co">    &gt;&gt;&gt; muffy_key = muffy.put()</span>
+
+<span class="co">    Once created, you can load a pet by its key:</span>
+
+<span class="co">    &gt;&gt;&gt; muffy_key.get() # doctest: +ELLIPSIS</span>
+<span class="co">    Pet(name=u&#39;muffy&#39;, type=u&#39;dog&#39;, breed=u&quot;Shi&#39;Tzu&quot;, ...)</span>
+
+<span class="co">    Or by a query that selects the pet:</span>
+
+<span class="co">    &gt;&gt;&gt; list(Pet.query(Pet.type == &#39;dog&#39;)) # doctest: +ELLIPSIS</span>
+<span class="co">    [Pet(name=u&#39;muffy&#39;, ...)]</span>
+
+<span class="co">    To modify a pet, change one of its properties and ``put()`` it again.</span>
+
+<span class="co">    &gt;&gt;&gt; muffy_2 = muffy</span>
+<span class="co">    &gt;&gt;&gt; muffy_2.age = 10</span>
+<span class="co">    &gt;&gt;&gt; muffy_key_2 = muffy_2.put()</span>
+
+<span class="co">    The pet&#39;s key doesn&#39;t change when it is updated.</span>
+
+<span class="co">    &gt;&gt;&gt; bool(muffy_key == muffy_key_2)</span>
+<span class="co">    True</span>
+<span class="co">    &quot;&quot;&quot;</span>
+    name = ndb.StringProperty(required=<span class="ot">True</span>)
+    <span class="dt">type</span> = ndb.StringProperty(required=<span class="ot">True</span>, choices=(<span class="st">&quot;cat&quot;</span>, <span class="st">&quot;dog&quot;</span>, <span class="st">&quot;bird&quot;</span>, <span class="st">&quot;fish&quot;</span>, <span class="st">&quot;monkey&quot;</span>))
+    breed = ndb.StringProperty()
+    age = ndb.IntegerProperty()
+    comments = ndb.TextProperty()
+    created = ndb.DateTimeProperty(auto_now_add=<span class="ot">True</span>, required=<span class="ot">True</span>)
+
+    <span class="kw">def</span> <span class="ot">__repr__</span>(<span class="ot">self</span>):
+        <span class="kw">return</span> (<span class="st">&quot;Pet(name=</span><span class="ot">%r</span><span class="st">, type=</span><span class="ot">%r</span><span class="st">, breed=</span><span class="ot">%r</span><span class="st">, age=</span><span class="ot">%r</span><span class="st">, &quot;</span>
+                <span class="co">&quot;comments=%r, created=%r)&quot;</span> %
+                (<span class="ot">self</span>.name, <span class="ot">self</span>.<span class="dt">type</span>, <span class="ot">self</span>.breed, <span class="ot">self</span>.age,
+                 <span class="ot">self</span>.comments, <span class="ot">self</span>.created))</code></pre>
+<p>Without NoseGAE, the doctests fail.</p>
+<pre><code>pets$ nosetests --with-doctest --logging-level=ERROR
+F
+======================================================================
+FAIL: Doctest: models.Pet
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py&quot;, line 2201, in runTest
+    raise self.failureException(self.format_failure(new.getvalue()))
+AssertionError: Failed doctest test for models.Pet
+  File &quot;/Users/Josh/Developer/Github/nosegae/support/pets/models.py&quot;, line 4, in Pet
+
+----------------------------------------------------------------------
+File &quot;/Users/Josh/Developer/Github/nosegae/support/pets/models.py&quot;, line 15, in models.Pet
+Failed example:
+    muffy_key = muffy.put()
+Exception raised:
+    Traceback (most recent call last):
+      File &quot;/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py&quot;, line 1289, in __run
+        compileflags, 1) in test.globs
+      File &quot;&lt;doctest models.Pet[2]&gt;&quot;, line 1, in &lt;module&gt;
+        muffy_key = muffy.put()
+      File &quot;/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine/google/appengine/ext/ndb/model.py&quot;, line 3379, in _put
+        return self._put_async(**ctx_options).get_result()
+      File &quot;/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine/google/appengine/ext/ndb/tasklets.py&quot;, line 325, in get_result
+        self.check_success()
+      File &quot;/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine/google/appengine/ext/ndb/tasklets.py&quot;, line 368, in _help_tasklet_along
+        value = gen.throw(exc.__class__, exc, tb)
+      File &quot;/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine/google/appengine/ext/ndb/context.py&quot;, line 810, in put
+        key = yield self._put_batcher.add(entity, options)
+      File &quot;/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine/google/appengine/ext/ndb/tasklets.py&quot;, line 371, in _help_tasklet_along
+        value = gen.send(val)
+      File &quot;/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine/google/appengine/ext/ndb/context.py&quot;, line 343, in _put_tasklet
+        keys = yield self._conn.async_put(options, datastore_entities)
+      File &quot;/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine/google/appengine/datastore/datastore_rpc.py&quot;, line 1801, in async_put
+        return make_put_call(base_req, pbs, extra_hook)
+      File &quot;/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine/google/appengine/datastore/datastore_rpc.py&quot;, line 1784, in make_put_call
+        service_name=self._api_version)
+      File &quot;/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine/google/appengine/datastore/datastore_rpc.py&quot;, line 1310, in _make_rpc_call
+        rpc = self._create_rpc(config, service_name)
+      File &quot;/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine/google/appengine/datastore/datastore_rpc.py&quot;, line 1205, in _create_rpc
+        rpc = apiproxy_stub_map.UserRPC(service_name, deadline, callback)
+      File &quot;/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine/google/appengine/api/apiproxy_stub_map.py&quot;, line 414, in __init__
+        self.__rpc = CreateRPC(service, stubmap)
+      File &quot;/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine/google/appengine/api/apiproxy_stub_map.py&quot;, line 68, in CreateRPC
+        assert stub, &#39;No api proxy found for service &quot;%s&quot;&#39; % service
+    AssertionError: No api proxy found for service &quot;datastore_v3&quot;
+    </code></pre>
+<p>With NoseGAE, they pass.</p>
+<pre><code>pets$ nosetests --with-doctest --with-gae
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.228s
+
+OK</code></pre>
+<h2 id="configuring-the-testbed">Configuring the TestBed</h2>
+<p>NoseGAE automatically configures your <code>TestBed</code> instance for you and then enables any stubs that you may need for your tests to pass. There are two ways to enable and configure your stubs. The first and most flexible way is to directly initialize the stub(s) on the <code>TestBed</code> instance injected into your test case. The second, and simpler way, is to set the <code>nosegae_*</code> and optional <code>nosegae_*_kwargs</code> attributes on your test case and let NoseGAE configure them for you. The following three sections describe how to use the <code>TestBed</code> in your own tests.</p>
+<h3 id="class-based-tests">Class Based Tests</h3>
+<p>The simplest of use cases is when your test class extends <code>unittest.TestCase</code>. The NoseGAE plugin injects an attribute named <code>testbed</code> to the instance of your test class and configures it based upon any attributes matching the convention <code>nosegae_&lt;stubname&gt;</code> and <code>nosegae_&lt;stubname&gt;_kwargs</code>.</p>
+<p>This test uses the assigned <code>testbed</code> attribute to manually configure each test.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">class</span> MyTest(unittest.TestCase):
+    <span class="kw">def</span> test_using_memcache(<span class="ot">self</span>):
+        <span class="co">&quot;&quot;&quot;Unit test using memcache&quot;&quot;&quot;</span>
+        <span class="ch">from</span> google.appengine.api <span class="ch">import</span> memcache
+        <span class="ot">self</span>.testbed.init_memcache_stub()
+        memcache.<span class="dt">set</span>(<span class="st">&#39;test&#39;</span>, <span class="ot">True</span>, <span class="dv">30</span>)
+        <span class="ot">self</span>.assertTrue(memcache.get(<span class="st">&#39;test&#39;</span>))
+    
+    <span class="kw">def</span> test_using_taskqueue(<span class="ot">self</span>):
+        <span class="co">&quot;&quot;&quot;Unit test using the taskqueue&quot;&quot;&quot;</span>
+        <span class="ot">self</span>.testbed.init_taskqueue_stub(root_path=<span class="st">&#39;/path/to/app&#39;</span>)
+        <span class="ch">from</span> google.appengine.api <span class="ch">import</span> taskqueue
+        task_url = <span class="st">&#39;/some/task&#39;</span>
+        taskqueue.add(url=task_url)
+        stub = <span class="ot">self</span>.testbed.get_stub(<span class="st">&#39;taskqueue&#39;</span>)
+        tasks = <span class="ot">self</span>.taskqueue_stub.get_filtered_tasks(url=task_url)
+        <span class="ot">self</span>.assertEqual(<span class="dv">1</span>, <span class="dt">len</span>(tasks))
+        <span class="ot">self</span>.assertEqual(task_url, tasks[<span class="dv">0</span>].url)</code></pre>
+<p>The following test case shows how to write a test that uses the datastore stub based on the simple configuration method using <code>nosegae_&lt;stubname&gt;</code> and <code>nosegae_&lt;stubname&gt;_kwargs</code>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">class</span> DataTest(unittest.TestCase):
+    <span class="co"># enable the datastore stub</span>
+    nosegae_datastore_v3 = <span class="ot">True</span>
+    
+    <span class="kw">def</span> test_get_entity(<span class="ot">self</span>):
+        <span class="co">&quot;&quot;&quot;Naively tests that we can fetch an entity from the datastore&quot;&quot;&quot;</span>
+        entity = MyModel.query().get()
+        <span class="ot">self</span>.assertIsNotNone(entity)
+    </code></pre>
+<h3 id="function-tests">Function Tests</h3>
+<p>This test case uses the <code>testbed</code> instance assigned to the function to manually configure any needed stubs. See <code>support/function_manual_config</code>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> test_index():
+    <span class="co"># test_index.testbed is assigned by the NoseGAE plugin</span>
+    test_index.testbed.init_taskqueue_stub(task_retry_seconds=<span class="dv">42</span>, root_path=os.path.dirname(<span class="ot">__file__</span>))
+    <span class="co"># Assume the `/` route fires off a task queue and should pass without exceptions</span>
+    app = TestApp(helloworld.app)
+    response = app.get(<span class="st">&#39;/&#39;</span>)
+    <span class="kw">assert</span> <span class="st">&#39;Hello world!&#39;</span> in <span class="dt">str</span>(response)</code></pre>
+<p>The following test shows how to use the simple method while passing kwargs to the taskqueue stub's initialization method. See <code>support/issue42_task-queue</code> for full example code.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> test_index():
+    <span class="co"># Assume the `/` route fires off a task queue and should pass without exceptions</span>
+    app = TestApp(app)
+    response = app.get(<span class="st">&#39;/&#39;</span>)
+    <span class="kw">assert</span> <span class="st">&#39;Hello world!&#39;</span> in <span class="dt">str</span>(response)
+
+<span class="co"># Enable any stubs needed as attributes off of the test function</span>
+
+<span class="co"># NoseGAE looks for queue.yaml in the root of the</span>
+<span class="co"># application when nosegae_taskqueue is True</span>
+test_index.nosegae_taskqueue = <span class="ot">True</span>
+
+<span class="co"># ...or you can manually set the path and any additional arguments with the kwargs attribute</span>
+test_index.nosegae_taskqueue_kwargs = <span class="dt">dict</span>(task_retry_seconds=<span class="dv">42</span>, root_path=os.path.dirname(<span class="ot">__file__</span>))</code></pre>
+<h3 id="doctest">Doctest</h3>
+<p>Doctests are a whole other beast. They still work but all <code>TestBed</code> configuration has to be done manually. NoseGAE uses the <a href="http://nose.readthedocs.org/en/latest/plugins/doctests.html">nose doctest plugin</a> to inject a global variable named <code>testbed</code> into your doctest scope that contains the current active <code>TestBed</code> instance. See <code>support/pets/models.py</code> for full example.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">class</span> Pet(ndb.Model):
+    <span class="co">&quot;&quot;&quot;The Pet class provides storage for pets.</span>
+
+<span class="co">    &gt;&gt;&gt; # Initialize stubs using the injected testbed instance</span>
+<span class="co">    &gt;&gt;&gt; testbed.init_memcache_stub()</span>
+<span class="co">    &gt;&gt;&gt; testbed.init_datastore_v3_stub()</span>
+
+<span class="co">    You can create a pet:</span>
+<span class="co">    &gt;&gt;&gt; muffy = Pet(name=u&#39;muffy&#39;, type=u&#39;dog&#39;, breed=u&quot;Shi&#39;Tzu&quot;)</span>
+<span class="co">    &gt;&gt;&gt; muffy_key = muffy.put()</span>
+<span class="co">    &quot;&quot;&quot;</span>
+    name = ndb.StringProperty(required=<span class="ot">True</span>)
+    <span class="dt">type</span> = ndb.StringProperty(required=<span class="ot">True</span>, choices=(<span class="st">&quot;cat&quot;</span>, <span class="st">&quot;dog&quot;</span>, <span class="st">&quot;bird&quot;</span>, <span class="st">&quot;fish&quot;</span>, <span class="st">&quot;monkey&quot;</span>))
+    breed = ndb.StringProperty()</code></pre>
+<h2 id="changes-in-0.4.0">Changes in 0.4.0</h2>
+<p>The 0.4.0 release is a major rewrite to support <code>dev_appserver2</code>. This release introduced two important changes listed below.</p>
+<h3 id="sandbox-is-gone">Sandbox is gone</h3>
+<p>Due to changes in the sandboxing mechanisms in dev_appserver2, it isn't possible for NoseGAE to simulate the deployed environment any longer. The sandboxing feature had to be removed since there is no longer any way to toggle it between <code>nose</code>s own internal workings.</p>
+<p>This means that certain tests may pass locally but the code in question will fail in production due to restricted modules and functions. As of now there is no workaround but pull requests are welcome!</p>
+<h3 id="testbed-is-set-up-for-you">Testbed is set up for you</h3>
+<p>The new plugin automatically sets up the initial <code>google.appengine.ext.testbed.Testbed</code> instance and injects it into your test cases for you.</p>
+</body>
+</html>
