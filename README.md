@@ -1,5 +1,7 @@
 NoseGAE: Nose for Google App Engine Testing
 ==================================================
+[![PyPI](https://badge.fury.io/py/NoseGAE.svg)](http://badge.fury.io/py/NoseGAE)
+[![GitHub](https://badge.fury.io/gh/NoseGAE.svg)](http://badge.fury.io/gh/NoseGAE)
 
 ## Overview
 
