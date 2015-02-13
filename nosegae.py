@@ -89,6 +89,8 @@ class NoseGAE(Plugin):
         configuration = application_configuration.ApplicationConfiguration([self._app_path])
 
         os.environ['APPLICATION_ID'] = configuration.app_id
+        # simulate same environment as devappserver2
+        os.environ['CURRENT_VERSION_ID'] = configuration.modules[0].version_id
 
         self.is_doctests = options.enable_plugin_doctest
 
