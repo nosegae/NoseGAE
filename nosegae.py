@@ -60,7 +60,7 @@ class NoseGAE(Plugin):
                 "Tests are running with: %s" % sys.version)
 
         if options.gae_lib_root not in sys.path:
-            sys.path.append(options.gae_lib_root)
+            sys.path.insert(0, options.gae_lib_root)
 
         self._app_path = options.gae_app or config.workingDir
         self._data_path = options.gae_data or os.path.join(tempfile.gettempdir(),
