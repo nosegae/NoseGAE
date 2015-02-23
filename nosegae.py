@@ -59,12 +59,23 @@ class NoseGAE(Plugin):
                 "Python version must be 2.7 or greater, like the Google App Engine environment.  "
                 "Tests are running with: %s" % sys.version)
 
-        if options.gae_lib_root not in sys.path:
-            sys.path.insert(0, options.gae_lib_root)
-
-        self._app_path = options.gae_app or config.workingDir
+        try:
+            self._app_path = options.gae_app.split(',')
+        except AttributeError:
+            self._app_path = [config.workingDir]
         self._data_path = options.gae_data or os.path.join(tempfile.gettempdir(),
                                                            'nosegae.sqlite3')
+
+        if options.gae_lib_root not in sys.path:
+            options.gae_lib_root = os.path.realpath(options.gae_lib_root)
+            sys.path.insert(0, options.gae_lib_root)
+
+        for path_ in self._app_path:
+            path_ = os.path.realpath(path_)
+            if not os.path.isdir(path_):
+                path_ = os.path.dirname(path_)
+            if path_ not in sys.path:
+                sys.path.append(path_)
 
         if 'google' in sys.modules:
             # make sure an egg (e.g. protobuf) is not cached
@@ -86,7 +97,7 @@ class NoseGAE(Plugin):
         from google.appengine.tools.devappserver2 import application_configuration
 
         # get the app id out of your app.yaml and stuff
-        configuration = application_configuration.ApplicationConfiguration([self._app_path])
+        configuration = application_configuration.ApplicationConfiguration(self._app_path)
 
         os.environ['APPLICATION_ID'] = configuration.app_id
         # simulate same environment as devappserver2
@@ -147,10 +158,16 @@ class NoseGAE(Plugin):
                 task_args.update(stub_kwargs)
                 stub_kwargs = task_args
             elif stub_name == testbed.USER_SERVICE_NAME:
+                # do a little dance to keep the same kwargs for multiple tests in the same class
+                # because the user stub will barf if you pass these items into it
+                # stub = user_service_stub.UserServiceStub(**stub_kw_args)
+                # TypeError: __init__() got an unexpected keyword argument 'USER_IS_ADMIN'
+                task_args = stub_kwargs.copy()
                 self.testbed.setup_env(overwrite=True,
-                                       USER_ID=stub_kwargs.pop('USER_ID', 'testuser'),
-                                       USER_EMAIL=stub_kwargs.pop('USER_EMAIL', 'testuser@example.org'),
-                                       USER_IS_ADMIN=stub_kwargs.pop('USER_IS_ADMIN', '1'))
+                                       USER_ID=task_args.pop('USER_ID', 'testuser'),
+                                       USER_EMAIL=task_args.pop('USER_EMAIL', 'testuser@example.org'),
+                                       USER_IS_ADMIN=task_args.pop('USER_IS_ADMIN', '1'))
+                stub_kwargs = task_args
             getattr(self.testbed, stub_init)(**stub_kwargs)
 
         if self.is_doctests:

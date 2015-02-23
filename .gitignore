@@ -47,3 +47,4 @@ storage
 *.sqlite3
 
 .ropeproject
+venv

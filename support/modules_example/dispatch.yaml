@@ -1,0 +1,14 @@
+application: simple-sample
+
+dispatch:
+# Default module serves the typical web resources and all static resources.
+- url: "*/favicon.ico"
+  module: default
+
+# Send all mobile traffic to the mobile frontend.
+- url: "*/mobile/*"
+  module: mobile-frontend
+
+# Send all work to the one static backend.
+- url: "*/work/*"
+  module: static-backend
