@@ -59,15 +59,23 @@ class NoseGAE(Plugin):
                 "Python version must be 2.7 or greater, like the Google App Engine environment.  "
                 "Tests are running with: %s" % sys.version)
 
-        if options.gae_lib_root not in sys.path:
-            sys.path.insert(0, options.gae_lib_root)
-
         try:
             self._app_path = options.gae_app.split(',')
         except AttributeError:
             self._app_path = [config.workingDir]
         self._data_path = options.gae_data or os.path.join(tempfile.gettempdir(),
                                                            'nosegae.sqlite3')
+
+        if options.gae_lib_root not in sys.path:
+            options.gae_lib_root = os.path.realpath(options.gae_lib_root)
+            sys.path.insert(0, options.gae_lib_root)
+
+        for path_ in self._app_path:
+            path_ = os.path.realpath(path_)
+            if not os.path.isdir(path_):
+                path_ = os.path.dirname(path_)
+            if path_ not in sys.path:
+                sys.path.append(path_)
 
         if 'google' in sys.modules:
             # make sure an egg (e.g. protobuf) is not cached
