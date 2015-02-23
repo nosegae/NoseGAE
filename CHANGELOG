@@ -1,5 +1,5 @@
 0.5.2
-- Accept multiple modules via repeated command line flags (Issue #22)
+- Accept multiple modules comma-delimited --gae-application (Issue #22) (see support/modules_example/runtests.sh)
 - Prepend GAE lib directory to path instead of append (Issue #23)
 
 0.5.1
