@@ -1,3 +1,7 @@
+0.5.2
+- Accept multiple modules comma-delimited --gae-application (Issue #22) (see support/modules_example/runtests.sh)
+- Prepend GAE lib directory to path instead of append (Issue #23)
+
 0.5.1
 
 - Populate os.environ['CURRENT_VERSION_ID'] using devappserver2's built in

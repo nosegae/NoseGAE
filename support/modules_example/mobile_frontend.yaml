@@ -1,0 +1,11 @@
+application: simple-sample
+module: mobile-frontend
+version: uno
+runtime: python27
+api_version: 1
+threadsafe: true
+
+
+handlers:
+- url: /.*
+  script: printenv.APP

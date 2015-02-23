@@ -350,6 +350,15 @@ class Pet(ndb.Model):
     type = ndb.StringProperty(required=True, choices=("cat", "dog", "bird", "fish", "monkey"))
     breed = ndb.StringProperty()
 ```
+## Changes in 0.5.2
+
+The 0.5.2 release introduces preliminary modules support by allowing multiple yaml or paths sent to the
+`--gae-application` command line option.
+
+```sh
+nosetests --with-gae \
+          --gae-application='app.yaml,mobile_frontend.yaml,static_backend.yaml,dispatch.yaml'
+```
 
 ## Changes in 0.4.0
 
