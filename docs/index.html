@@ -28,6 +28,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </head>
 <body>
 <h1 id="nosegae-nose-for-google-app-engine-testing">NoseGAE: Nose for Google App Engine Testing</h1>
+<p><a href="https://pypi.python.org/pypi/NoseGAE"><img src="https://img.shields.io/pypi/v/NoseGAE.svg" alt="PyPI" /></a> <a href="https://pypi.python.org/pypi/NoseGAE"><img src="https://img.shields.io/pypi/dm/NoseGAE.svg" alt="Downloads" /></a> <a href="https://pypi.python.org/pypi/NoseGAE"><img src="https://img.shields.io/pypi/l/NoseGAE.svg" alt="License" /></a> <a href="http://github.com/Trii/NoseGAE"><img src="https://img.shields.io/github/release/Trii/NoseGae.svg" alt="GitHub" /></a></p>
 <h2 id="overview">Overview</h2>
 <p>NoseGAE is a <a href="http://nose.readthedocs.org/en/latest/index.html">nose</a> plugin that makes it easier to write functional and unit tests for <a href="https://cloud.google.com/appengine/">Google App Engine</a> applications.</p>
 <ol style="list-style-type: decimal">
@@ -288,6 +289,10 @@ test_index.nosegae_taskqueue_kwargs = <span class="dt">dict</span>(task_retry_se
     name = ndb.StringProperty(required=<span class="ot">True</span>)
     <span class="dt">type</span> = ndb.StringProperty(required=<span class="ot">True</span>, choices=(<span class="st">&quot;cat&quot;</span>, <span class="st">&quot;dog&quot;</span>, <span class="st">&quot;bird&quot;</span>, <span class="st">&quot;fish&quot;</span>, <span class="st">&quot;monkey&quot;</span>))
     breed = ndb.StringProperty()</code></pre>
+<h2 id="changes-in-0.5.2">Changes in 0.5.2</h2>
+<p>The 0.5.2 release introduces preliminary modules support by allowing multiple yaml or paths sent to the <code>--gae-application</code> command line option.</p>
+<pre class="sh"><code>nosetests --with-gae \
+          --gae-application=&#39;app.yaml,mobile_frontend.yaml,static_backend.yaml,dispatch.yaml&#39;</code></pre>
 <h2 id="changes-in-0.4.0">Changes in 0.4.0</h2>
 <p>The 0.4.0 release is a major rewrite to support <code>dev_appserver2</code>. This release introduced two important changes listed below.</p>
 <h3 id="sandbox-is-gone">Sandbox is gone</h3>
