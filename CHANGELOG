@@ -1,3 +1,7 @@
+0.5.3
+- Fix regression in automatic taskqueue stup initialization due to app_path becoming a list in 0.5.2
+- Add Travis-CI configuration for automated testing so this won't happen again
+
 0.5.2
 - Accept multiple modules comma-delimited --gae-application (Issue #22) (see support/modules_example/runtests.sh)
 - Prepend GAE lib directory to path instead of append (Issue #23)
