@@ -146,29 +146,16 @@ class NoseGAE(Plugin):
                 continue
             stub_kwargs = getattr(the_test, 'nosegae_%s_kwargs' % stub_name, {})
             if stub_name == testbed.TASKQUEUE_SERVICE_NAME:
-                # root_path is required so the stub can find queue.yaml
-                task_args = dict(root_path=self._app_path)
-                task_args.update(stub_kwargs)
-                stub_kwargs = task_args
+                self._init_taskqueue_stub(**stub_kwargs)
             elif stub_name == testbed.DATASTORE_SERVICE_NAME:
                 if not self.testbed.get_stub(testbed.MEMCACHE_SERVICE_NAME):
                     # ndb requires memcache so enable it as well as the datastore_v3
                     self.testbed.init_memcache_stub()
-                task_args = dict(datastore_file=self._data_path)
-                task_args.update(stub_kwargs)
-                stub_kwargs = task_args
+                self._init_datastore_v3_stub(**stub_kwargs)
             elif stub_name == testbed.USER_SERVICE_NAME:
-                # do a little dance to keep the same kwargs for multiple tests in the same class
-                # because the user stub will barf if you pass these items into it
-                # stub = user_service_stub.UserServiceStub(**stub_kw_args)
-                # TypeError: __init__() got an unexpected keyword argument 'USER_IS_ADMIN'
-                task_args = stub_kwargs.copy()
-                self.testbed.setup_env(overwrite=True,
-                                       USER_ID=task_args.pop('USER_ID', 'testuser'),
-                                       USER_EMAIL=task_args.pop('USER_EMAIL', 'testuser@example.org'),
-                                       USER_IS_ADMIN=task_args.pop('USER_IS_ADMIN', '1'))
-                stub_kwargs = task_args
-            getattr(self.testbed, stub_init)(**stub_kwargs)
+                self._init_user_stub(**stub_kwargs)
+            else:
+                self._init_stub(stub_init, **stub_kwargs)
 
         if self.is_doctests:
             self._doctest_compat(the_test)
@@ -215,3 +202,39 @@ class NoseGAE(Plugin):
                     taskqueue_stub=self.get_stub(testbed.TASKQUEUE_SERVICE_NAME))
                 self._register_stub(testbed.PROSPECTIVE_SEARCH_SERVICE_NAME, stub)
             testbed.Testbed.init_prospective_search_stub = init_prospective_search_stub
+
+    def _init_taskqueue_stub(self, **stub_kwargs):
+        """Initializes the taskqueue stub using nosegae config magic"""
+        task_args = {}
+        # root_path is required so the stub can find 'queue.yaml' or 'queue.yml'
+        if 'root_path' not in stub_kwargs:
+            for p in self._app_path:
+                if os.path.isfile(os.path.join(p, 'queue.yaml')) or \
+                        os.path.isfile(os.path.join(p, 'queue.yml')):
+                    task_args['root_path'] = p
+                    break
+        task_args.update(stub_kwargs)
+        self.testbed.init_taskqueue_stub(**task_args)
+
+    def _init_datastore_v3_stub(self, **stub_kwargs):
+        """Initializes the datastore stub using nosegae config magic"""
+        task_args = dict(datastore_file=self._data_path)
+        task_args.update(stub_kwargs)
+        self.testbed.init_datastore_v3_stub(**task_args)
+
+    def _init_user_stub(self, **stub_kwargs):
+        """Initializes the user stub using nosegae config magic"""
+        # do a little dance to keep the same kwargs for multiple tests in the same class
+        # because the user stub will barf if you pass these items into it
+        # stub = user_service_stub.UserServiceStub(**stub_kw_args)
+        # TypeError: __init__() got an unexpected keyword argument 'USER_IS_ADMIN'
+        task_args = stub_kwargs.copy()
+        self.testbed.setup_env(overwrite=True,
+                               USER_ID=task_args.pop('USER_ID', 'testuser'),
+                               USER_EMAIL=task_args.pop('USER_EMAIL', 'testuser@example.org'),
+                               USER_IS_ADMIN=task_args.pop('USER_IS_ADMIN', '1'))
+        self.testbed.init_user_stub(**task_args)
+
+    def _init_stub(self, stub_init, **stub_kwargs):
+        """Initializes all other stubs for consistency's sake"""
+        getattr(self.testbed, stub_init, lambda **kwargs: None)(**stub_kwargs)
