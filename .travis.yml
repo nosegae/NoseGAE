@@ -9,7 +9,8 @@ install:
       google-cloud-sdk/install.sh --usage-reporting false --path-update false --rc-path=~/.bashrc --bash-completion false --override-components=app;
     fi;
   - google-cloud-sdk/bin/gcloud components update --quiet preview app gae-python
-  - python setup.py test
+  - pip install webtest
+  - python setup.py install
 script:
   - set -e
   - cd support/app_with_logging;
