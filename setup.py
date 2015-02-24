@@ -28,5 +28,6 @@ setup(
     },
     py_modules=['nosegae'],
     install_requires=['nose>=0.10.1'],
+    tests_require=['webtest'],
     zip_safe=False
 )
