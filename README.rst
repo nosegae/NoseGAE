@@ -1,7 +1,7 @@
 NoseGAE: Nose for Google App Engine Testing
 ===========================================
 
-|PyPI| |Downloads| |License| |GitHub|
+|PyPI| |Downloads| |License| |Build Status|
 
 Overview
 --------
@@ -411,5 +411,5 @@ your test cases for you.
    :target: https://pypi.python.org/pypi/NoseGAE
 .. |License| image:: https://img.shields.io/pypi/l/NoseGAE.svg
    :target: https://pypi.python.org/pypi/NoseGAE
-.. |GitHub| image:: https://img.shields.io/github/release/Trii/NoseGae.svg
-   :target: http://github.com/Trii/NoseGAE
+.. |Build Status| image:: https://travis-ci.org/Trii/NoseGAE.svg?branch=0.5.3
+   :target: https://travis-ci.org/Trii/NoseGAE
