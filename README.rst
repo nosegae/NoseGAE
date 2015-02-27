@@ -37,7 +37,7 @@ proper paths using ``dev_appserver.fix_sys_path()``.
 Functional tests
 ~~~~~~~~~~~~~~~~
 
-Consider the simple hello world application in ``support/helloworld``:
+Consider the simple hello world application in ``examples/helloworld``:
 
 .. code:: python
 
@@ -54,7 +54,7 @@ Consider the simple hello world application in ``support/helloworld``:
 
     app = webapp2.WSGIApplication([('/', Hello)], debug=True)
 
-And a simple functional test suite ``support/helloworld/test.py`` for
+And a simple functional test suite ``examples/helloworld/test.py`` for
 the application:
 
 .. code:: python
@@ -93,9 +93,9 @@ Without NoseGAE, the test fails.
         return self.importFromDir(dir_path, fqname)
       File "/Users/Josh/Developer/Github/jj/lib/python2.7/site-packages/nose-1.3.4-py2.7.egg/nose/importer.py", line 94, in importFromDir
         mod = load_module(part_fqname, fh, filename, desc)
-      File "/Users/Josh/Developer/Github/nosegae/support/helloworld/test.py", line 2, in <module>
+      File "/Users/Josh/Developer/Github/nosegae/examples/helloworld/test.py", line 2, in <module>
         import helloworld
-      File "/Users/Josh/Developer/Github/nosegae/support/helloworld/helloworld.py", line 1, in <module>
+      File "/Users/Josh/Developer/Github/nosegae/examples/helloworld/helloworld.py", line 1, in <module>
         import webapp2
     ImportError: No module named webapp2
 
@@ -125,7 +125,7 @@ Engine datastore isn't available. However, since the NoseGAE plugin sets
 up the development environment around your test run, you can use models
 directly in your tests.
 
-Consider the ``support/pets/models.py`` file that includes some
+Consider the ``examples/pets/models.py`` file that includes some
 doctests:
 
 .. code:: python
@@ -192,10 +192,10 @@ Without NoseGAE, the doctests fail.
       File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py", line 2201, in runTest
         raise self.failureException(self.format_failure(new.getvalue()))
     AssertionError: Failed doctest test for models.Pet
-      File "/Users/Josh/Developer/Github/nosegae/support/pets/models.py", line 4, in Pet
+      File "/Users/Josh/Developer/Github/nosegae/examples/pets/models.py", line 4, in Pet
 
     ----------------------------------------------------------------------
-    File "/Users/Josh/Developer/Github/nosegae/support/pets/models.py", line 15, in models.Pet
+    File "/Users/Josh/Developer/Github/nosegae/examples/pets/models.py", line 15, in models.Pet
     Failed example:
         muffy_key = muffy.put()
     Exception raised:
@@ -308,7 +308,7 @@ Function Tests
 
 This test case uses the ``testbed`` instance assigned to the function to
 manually configure any needed stubs. See
-``support/function_manual_config``.
+``examples/function_manual_config``.
 
 .. code:: python
 
@@ -322,7 +322,7 @@ manually configure any needed stubs. See
 
 The following test shows how to use the simple method while passing
 kwargs to the taskqueue stub's initialization method. See
-``support/issue42_task-queue`` for full example code.
+``examples/issue42_task-queue`` for full example code.
 
 .. code:: python
 
@@ -349,7 +349,7 @@ configuration has to be done manually. NoseGAE uses the `nose doctest
 plugin <http://nose.readthedocs.org/en/latest/plugins/doctests.html>`__
 to inject a global variable named ``testbed`` into your doctest scope
 that contains the current active ``TestBed`` instance. See
-``support/pets/models.py`` for full example.
+``examples/pets/models.py`` for full example.
 
 .. code:: python
 
