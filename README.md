@@ -3,7 +3,7 @@ NoseGAE: Nose for Google App Engine Testing
 [![PyPI](https://img.shields.io/pypi/v/NoseGAE.svg)](https://pypi.python.org/pypi/NoseGAE)
 [![Downloads](https://img.shields.io/pypi/dm/NoseGAE.svg)](https://pypi.python.org/pypi/NoseGAE)
 [![License](https://img.shields.io/pypi/l/NoseGAE.svg)](https://pypi.python.org/pypi/NoseGAE)
-[![Build Status](https://travis-ci.org/Trii/NoseGAE.svg?branch=0.5.3)](https://travis-ci.org/Trii/NoseGAE)
+[![Build Status](https://travis-ci.org/Trii/NoseGAE.svg?branch=master)](https://travis-ci.org/Trii/NoseGAE)
 
 ## Overview
 
@@ -17,7 +17,7 @@ write functional and unit tests for [Google App Engine](https://cloud.google.com
 	1. [Class Based Tests](#class-based-tests)
 	2. [Function Tests](#function-tests)
 	3. [Doctest](#doctest)
-3. [Changes in 0.5.3](#changes-in-0.5.3)
+3. [Changes in 0.5.2](#changes-in-0.5.2)
 4. [Changes in 0.4.0](#changes-in-0.4.0)
 
 
