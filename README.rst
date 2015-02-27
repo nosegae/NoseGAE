@@ -22,8 +22,8 @@ applications.
    2. `Function Tests <#function-tests>`__
    3. `Doctest <#doctest>`__
 
-3. `Changes in 0.5.2 <#changes-in-0.5.2>`__
-4. `Changes in 0.4.0 <#changes-in-0.4.0>`__
+3. `Changes in 0.5.2 <#changes-in-052>`__
+4. `Changes in 0.4.0 <#changes-in-040>`__
 
 What does it do?
 ----------------

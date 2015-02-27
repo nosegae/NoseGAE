@@ -17,8 +17,8 @@ write functional and unit tests for [Google App Engine](https://cloud.google.com
 	1. [Class Based Tests](#class-based-tests)
 	2. [Function Tests](#function-tests)
 	3. [Doctest](#doctest)
-3. [Changes in 0.5.2](#changes-in-0.5.2)
-4. [Changes in 0.4.0](#changes-in-0.4.0)
+3. [Changes in 0.5.2](#changes-in-052)
+4. [Changes in 0.4.0](#changes-in-040)
 
 
 ## What does it do?
