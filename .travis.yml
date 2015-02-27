@@ -2,38 +2,9 @@ language: python
 python:
   - "2.7"
 install:
-  - if [[ ! -f google-cloud-sdk/path.bash.inc ]]; then
-      echo "Downloading google cloud sdk";
-      wget https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.zip;
-      unzip -qq google-cloud-sdk.zip;
-      google-cloud-sdk/install.sh --usage-reporting false --path-update false --rc-path=~/.bashrc --bash-completion false --override-components=app;
-    fi;
-  - google-cloud-sdk/bin/gcloud components update --quiet preview app gae-python
-  - pip install webtest
+  - ./examples/install-gcloud-sdk.sh
+  - pip install -r examples/test_requirements.txt
   - python setup.py install
 script:
   - set -e
-  - cd support/app_with_logging;
-    nosetests --with-gae --gae-lib-root ../../google-cloud-sdk/platform/google_appengine;
-    cd -;
-  - cd support/function_manual_config;
-    nosetests --with-gae --gae-lib-root ../../google-cloud-sdk/platform/google_appengine;
-    cd -;
-  - cd support/helloworld;
-    nosetests --with-gae --gae-lib-root ../../google-cloud-sdk/platform/google_appengine;
-    cd -;
-  - cd support/issue02;
-    nosetests --with-gae --gae-lib-root ../../google-cloud-sdk/platform/google_appengine;
-    cd -;
-  - cd support/issue07;
-    nosetests --with-gae --gae-lib-root ../../google-cloud-sdk/platform/google_appengine;
-    cd -;
-  - cd support/issue13-get_current_user;
-    nosetests --with-gae --gae-lib-root ../../google-cloud-sdk/platform/google_appengine;
-    cd -;
-  - cd support/issue42_task-queue;
-    nosetests --with-gae --gae-lib-root ../../google-cloud-sdk/platform/google_appengine;
-    cd -;
-  - cd support/modules_example;
-    nosetests --with-gae --gae-lib-root ../../google-cloud-sdk/platform/google_appengine --gae-application 'app.yaml,mobile_frontend.yaml,static_backend.yaml,dispatch.yaml';
-    cd -;
+  - for i in $(ls ./examples/*/runtests.sh); do $i; done;

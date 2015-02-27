@@ -48,7 +48,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h2 id="what-does-it-do">What does it do?</h2>
 <p>NoseGAE sets up the GAE development environment before your test run. This means that you can easily write functional tests for your application without having to actually start the dev server and test over http. The plugin also configures and initializes a TestBed instance, your application_id based off your <code>app.yaml</code>, and sets the proper paths using <code>dev_appserver.fix_sys_path()</code>.</p>
 <h3 id="functional-tests">Functional tests</h3>
-<p>Consider the simple hello world application in <code>support/helloworld</code>:</p>
+<p>Consider the simple hello world application in <code>examples/helloworld</code>:</p>
 <pre class="sourceCode python"><code class="sourceCode python"><span class="ch">import</span> webapp2
 <span class="ch">from</span> jinja2 <span class="ch">import</span> Environment
 
@@ -61,7 +61,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
         <span class="ot">self</span>.response.out.write(template.render(greeting=<span class="st">&#39;world&#39;</span>))
 
 app = webapp2.WSGIApplication([(<span class="st">&#39;/&#39;</span>, Hello)], debug=<span class="ot">True</span>)</code></pre>
-<p>And a simple functional test suite <code>support/helloworld/test.py</code> for the application:</p>
+<p>And a simple functional test suite <code>examples/helloworld/test.py</code> for the application:</p>
 <pre class="sourceCode python"><code class="sourceCode python"><span class="ch">from</span> webtest <span class="ch">import</span> TestApp
 <span class="ch">import</span> unittest
 <span class="ch">import</span> helloworld
@@ -92,9 +92,9 @@ Traceback (most recent call last):
     return self.importFromDir(dir_path, fqname)
   File &quot;/Users/Josh/Developer/Github/jj/lib/python2.7/site-packages/nose-1.3.4-py2.7.egg/nose/importer.py&quot;, line 94, in importFromDir
     mod = load_module(part_fqname, fh, filename, desc)
-  File &quot;/Users/Josh/Developer/Github/nosegae/support/helloworld/test.py&quot;, line 2, in &lt;module&gt;
+  File &quot;/Users/Josh/Developer/Github/nosegae/examples/helloworld/test.py&quot;, line 2, in &lt;module&gt;
     import helloworld
-  File &quot;/Users/Josh/Developer/Github/nosegae/support/helloworld/helloworld.py&quot;, line 1, in &lt;module&gt;
+  File &quot;/Users/Josh/Developer/Github/nosegae/examples/helloworld/helloworld.py&quot;, line 1, in &lt;module&gt;
     import webapp2
 ImportError: No module named webapp2
 
@@ -112,7 +112,7 @@ OK
 </code></pre>
 <h3 id="unit-tests">Unit tests</h3>
 <p>Functional tests are only one kind of test, of course. What if you want to write unit tests for your data models? Normally, you can't use your models at all outside of the dev environment, because the Google App Engine datastore isn't available. However, since the NoseGAE plugin sets up the development environment around your test run, you can use models directly in your tests.</p>
-<p>Consider the <code>support/pets/models.py</code> file that includes some doctests:</p>
+<p>Consider the <code>examples/pets/models.py</code> file that includes some doctests:</p>
 <pre class="sourceCode python"><code class="sourceCode python"><span class="ch">from</span> google.appengine.ext <span class="ch">import</span> ndb
 
 <span class="kw">class</span> Pet(ndb.Model):
@@ -171,10 +171,10 @@ Traceback (most recent call last):
   File &quot;/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py&quot;, line 2201, in runTest
     raise self.failureException(self.format_failure(new.getvalue()))
 AssertionError: Failed doctest test for models.Pet
-  File &quot;/Users/Josh/Developer/Github/nosegae/support/pets/models.py&quot;, line 4, in Pet
+  File &quot;/Users/Josh/Developer/Github/nosegae/examples/pets/models.py&quot;, line 4, in Pet
 
 ----------------------------------------------------------------------
-File &quot;/Users/Josh/Developer/Github/nosegae/support/pets/models.py&quot;, line 15, in models.Pet
+File &quot;/Users/Josh/Developer/Github/nosegae/examples/pets/models.py&quot;, line 15, in models.Pet
 Failed example:
     muffy_key = muffy.put()
 Exception raised:
@@ -250,7 +250,7 @@ OK</code></pre>
         <span class="ot">self</span>.assertIsNotNone(entity)
     </code></pre>
 <h3 id="function-tests">Function Tests</h3>
-<p>This test case uses the <code>testbed</code> instance assigned to the function to manually configure any needed stubs. See <code>support/function_manual_config</code>.</p>
+<p>This test case uses the <code>testbed</code> instance assigned to the function to manually configure any needed stubs. See <code>examples/function_manual_config</code>.</p>
 <pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> test_index():
     <span class="co"># test_index.testbed is assigned by the NoseGAE plugin</span>
     test_index.testbed.init_taskqueue_stub(task_retry_seconds=<span class="dv">42</span>, root_path=os.path.dirname(<span class="ot">__file__</span>))
@@ -258,7 +258,7 @@ OK</code></pre>
     app = TestApp(helloworld.app)
     response = app.get(<span class="st">&#39;/&#39;</span>)
     <span class="kw">assert</span> <span class="st">&#39;Hello world!&#39;</span> in <span class="dt">str</span>(response)</code></pre>
-<p>The following test shows how to use the simple method while passing kwargs to the taskqueue stub's initialization method. See <code>support/issue42_task-queue</code> for full example code.</p>
+<p>The following test shows how to use the simple method while passing kwargs to the taskqueue stub's initialization method. See <code>examples/issue42_task-queue</code> for full example code.</p>
 <pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> test_index():
     <span class="co"># Assume the `/` route fires off a task queue and should pass without exceptions</span>
     app = TestApp(app)
@@ -274,7 +274,7 @@ test_index.nosegae_taskqueue = <span class="ot">True</span>
 <span class="co"># ...or you can manually set the path and any additional arguments with the kwargs attribute</span>
 test_index.nosegae_taskqueue_kwargs = <span class="dt">dict</span>(task_retry_seconds=<span class="dv">42</span>, root_path=os.path.dirname(<span class="ot">__file__</span>))</code></pre>
 <h3 id="doctest">Doctest</h3>
-<p>Doctests are a whole other beast. They still work but all <code>TestBed</code> configuration has to be done manually. NoseGAE uses the <a href="http://nose.readthedocs.org/en/latest/plugins/doctests.html">nose doctest plugin</a> to inject a global variable named <code>testbed</code> into your doctest scope that contains the current active <code>TestBed</code> instance. See <code>support/pets/models.py</code> for full example.</p>
+<p>Doctests are a whole other beast. They still work but all <code>TestBed</code> configuration has to be done manually. NoseGAE uses the <a href="http://nose.readthedocs.org/en/latest/plugins/doctests.html">nose doctest plugin</a> to inject a global variable named <code>testbed</code> into your doctest scope that contains the current active <code>TestBed</code> instance. See <code>examples/pets/models.py</code> for full example.</p>
 <pre class="sourceCode python"><code class="sourceCode python"><span class="kw">class</span> Pet(ndb.Model):
     <span class="co">&quot;&quot;&quot;The Pet class provides storage for pets.</span>
 

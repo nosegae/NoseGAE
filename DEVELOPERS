@@ -1,0 +1,16 @@
+# Developers
+
+This library requires the Google App Engine SDK in order to execute tests.
+You can download it from Google yourself or you can run the gcloud installer
+to do it for you.
+
+EASY MODE
+
+    > virtualenv myenv
+    > source myenv/bin/activate
+    > ./examples/install-gcloud-sdk.sh
+    > pip install -r examples/test_requirements.txt
+    > python setup.py develop
+
+Now you can run any of the tests under the `examples` directory to make sure
+you didn't break the world.
