@@ -249,9 +249,11 @@ class NoseGAE(Plugin):
         def_versions = {}  # {m: all_versions[m][0] for m in all_versions}
         m2h = {}  # {m: {def_versions[m]: 'localhost:8080'} for m in def_versions}
         for module in self.configuration.modules:
-            all_versions[module._module_name] = [module._version]
-            def_versions[module._module_name] = module._version
-            m2h[module._module_name] = {module._version: 'localhost:8080'}
+            module_name = module._module_name or 'default'
+            module_version = module._version or '1'
+            all_versions[module_name] = [module_version]
+            def_versions[module_name] = module_version
+            m2h[module_name] = {module_version: 'localhost:8080'}
 
         request_info._local_dispatcher = request_info._LocalFakeDispatcher(
             module_names=list(all_versions),
