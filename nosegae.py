@@ -97,11 +97,11 @@ class NoseGAE(Plugin):
         from google.appengine.tools.devappserver2 import application_configuration
 
         # get the app id out of your app.yaml and stuff
-        configuration = application_configuration.ApplicationConfiguration(self._app_path)
+        self.configuration = application_configuration.ApplicationConfiguration(self._app_path)
 
-        os.environ['APPLICATION_ID'] = configuration.app_id
+        os.environ['APPLICATION_ID'] = self.configuration.app_id
         # simulate same environment as devappserver2
-        os.environ['CURRENT_VERSION_ID'] = configuration.modules[0].version_id
+        os.environ['CURRENT_VERSION_ID'] = self.configuration.modules[0].version_id
 
         self.is_doctests = options.enable_plugin_doctest
 
@@ -154,6 +154,8 @@ class NoseGAE(Plugin):
                 self._init_datastore_v3_stub(**stub_kwargs)
             elif stub_name == testbed.USER_SERVICE_NAME:
                 self._init_user_stub(**stub_kwargs)
+            elif stub_name == testbed.MODULES_SERVICE_NAME:
+                self._init_modules_stub(**stub_kwargs)
             else:
                 self._init_stub(stub_init, **stub_kwargs)
 
@@ -234,6 +236,31 @@ class NoseGAE(Plugin):
                                USER_EMAIL=task_args.pop('USER_EMAIL', 'testuser@example.org'),
                                USER_IS_ADMIN=task_args.pop('USER_IS_ADMIN', '1'))
         self.testbed.init_user_stub(**task_args)
+
+    def _init_modules_stub(self, **_):
+        """Initializes the modules stub based off of your current yaml files
+
+        Implements solution from
+        http://stackoverflow.com/questions/28166558/invalidmoduleerror-when-using-testbed-to-unit-test-google-app-engine
+        """
+        from google.appengine.api import request_info
+        # edit all_versions per modules & versions thereof needing tests
+        all_versions = {}  # {'default': [1], 'andsome': [2], 'others': [1]}
+        def_versions = {}  # {m: all_versions[m][0] for m in all_versions}
+        m2h = {}  # {m: {def_versions[m]: 'localhost:8080'} for m in def_versions}
+        for module in self.configuration.modules:
+            module_name = module._module_name or 'default'
+            module_version = module._version or '1'
+            all_versions[module_name] = [module_version]
+            def_versions[module_name] = module_version
+            m2h[module_name] = {module_version: 'localhost:8080'}
+
+        request_info._local_dispatcher = request_info._LocalFakeDispatcher(
+            module_names=list(all_versions),
+            module_name_to_versions=all_versions,
+            module_name_to_default_versions=def_versions,
+            module_name_to_version_to_hostname=m2h)
+        self.testbed.init_modules_stub()
 
     def _init_stub(self, stub_init, **stub_kwargs):
         """Initializes all other stubs for consistency's sake"""

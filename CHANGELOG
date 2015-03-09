@@ -1,3 +1,7 @@
+0.5.4
+- Override module stub initialization based on SO post
+  http://stackoverflow.com/questions/28166558/invalidmoduleerror-when-using-testbed-to-unit-test-google-app-engine
+
 0.5.3
 - Fix regression in automatic taskqueue stup initialization due to app_path becoming a list in 0.5.2
 - Add Travis-CI configuration for automated testing so this won't happen again

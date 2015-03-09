@@ -3,7 +3,6 @@
 
 import cgi
 import os
-import sys
 
 from google.appengine.api import modules
 from google.appengine.api import users
