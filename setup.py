@@ -2,7 +2,7 @@ from setuptools import setup
 
 DESCRIPTION = "NoseGAE: nose plugin for Google App Engine testing"
 
-VERSION = '0.5.4'
+VERSION = '0.5.5'
 
 
 setup(
@@ -18,8 +18,12 @@ setup(
         "Environment :: Console",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
-        "Topic :: Software Development :: Testing"
+        'Natural Language :: English',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2.7',
+        "Topic :: Software Development :: Testing",
     ],
+    keywords=['google', 'appengine', 'unittest', 'nose', 'testing'],
     url='https://github.com/Trii/NoseGAE',
     download_url='https://github.com/Trii/NoseGAE/tarball/' + VERSION,
     license='BSD License',

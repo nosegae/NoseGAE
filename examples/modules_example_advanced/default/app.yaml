@@ -1,0 +1,16 @@
+application: simple-sample
+version: uno
+runtime: python27
+api_version: 1
+threadsafe: true
+
+automatic_scaling:
+  max_idle_instances: 20
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /.*
+  script: helloworld.APP

@@ -1,3 +1,7 @@
+0.5.5
+- Fix for taskqueue queue.yaml discovery in the case of --gae-application values that contain yaml files
+  example: --gae-application "dispatch.yaml,default/app.yaml,mod1/module.yaml" where queue.yaml is in default/
+
 0.5.4
 - Override module stub initialization based on SO post
   http://stackoverflow.com/questions/28166558/invalidmoduleerror-when-using-testbed-to-unit-test-google-app-engine
