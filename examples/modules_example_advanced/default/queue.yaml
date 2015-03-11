@@ -1,0 +1,5 @@
+queue:
+  - name: awesome-stuff
+    rate: 5/s
+    bucket_size: 20
+    max_concurrent_requests: 30

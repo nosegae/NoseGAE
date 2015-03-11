@@ -211,9 +211,11 @@ class NoseGAE(Plugin):
         # root_path is required so the stub can find 'queue.yaml' or 'queue.yml'
         if 'root_path' not in stub_kwargs:
             for p in self._app_path:
-                if os.path.isfile(os.path.join(p, 'queue.yaml')) or \
-                        os.path.isfile(os.path.join(p, 'queue.yml')):
-                    task_args['root_path'] = p
+                # support --gae-application values that may be a .yaml file
+                dir_ = os.path.dirname(p) if os.path.isfile(p) else p
+                if os.path.isfile(os.path.join(dir_, 'queue.yaml')) or \
+                        os.path.isfile(os.path.join(dir_, 'queue.yml')):
+                    task_args['root_path'] = dir_
                     break
         task_args.update(stub_kwargs)
         self.testbed.init_taskqueue_stub(**task_args)
