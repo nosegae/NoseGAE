@@ -80,12 +80,14 @@ class NoseGAE(Plugin):
         if 'google' in sys.modules:
             # make sure an egg (e.g. protobuf) is not cached
             # with the wrong path:
-            del sys.modules['google']
+            reload(sys.modules['google'])
         try:
             import appengine_config
         except ImportError:
             pass
 
+        # TODO: this may need to happen after parsing your yaml files in
+        # The case of modules but I need to investigate further
         import dev_appserver
         dev_appserver.fix_sys_path()  # add paths to libs specified in app.yaml, etc
 
