@@ -2,7 +2,7 @@ from setuptools import setup
 
 DESCRIPTION = "NoseGAE: nose plugin for Google App Engine testing"
 
-VERSION = '0.5.6'
+VERSION = '0.5.7'
 
 
 setup(

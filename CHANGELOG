@@ -1,3 +1,10 @@
+0.5.7
+- Re-added code that removes GAE log handler. Thanks obmarg!
+
+0.5.6
+- Fixes issue #34 by reloading the google module instead of deleting it from
+  sys.modules on setup.
+
 0.5.5
 - Fix for taskqueue queue.yaml discovery in the case of --gae-application values that contain yaml files
   example: --gae-application "dispatch.yaml,default/app.yaml,mod1/module.yaml" where queue.yaml is in default/
