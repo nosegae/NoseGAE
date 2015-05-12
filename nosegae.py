@@ -107,6 +107,14 @@ class NoseGAE(Plugin):
 
         self.is_doctests = options.enable_plugin_doctest
 
+        # As of SDK 0.2.5 the dev_appserver.py aggressively adds some logging handlers.
+        # This removes the handlers but note that Nose will still capture logging and
+        # report it during failures.  See Issue 25 for more info.
+        rootLogger = logging.getLogger()
+        for handler in rootLogger.handlers:
+            if isinstance(handler, logging.StreamHandler):
+                rootLogger.removeHandler(handler)
+
     def startTest(self, test):
         """Initializes Testbed stubs based off of attributes of the executing test
 
