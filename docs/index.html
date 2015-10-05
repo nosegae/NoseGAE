@@ -236,8 +236,8 @@ OK</code></pre>
         <span class="ch">from</span> google.appengine.api <span class="ch">import</span> taskqueue
         task_url = <span class="st">&#39;/some/task&#39;</span>
         taskqueue.add(url=task_url)
-        stub = <span class="ot">self</span>.testbed.get_stub(<span class="st">&#39;taskqueue&#39;</span>)
-        tasks = <span class="ot">self</span>.taskqueue_stub.get_filtered_tasks(url=task_url)
+        taskqueue_stub = <span class="ot">self</span>.testbed.get_stub(<span class="st">&#39;taskqueue&#39;</span>)
+        tasks = taskqueue_stub.get_filtered_tasks(url=task_url)
         <span class="ot">self</span>.assertEqual(<span class="dv">1</span>, <span class="dt">len</span>(tasks))
         <span class="ot">self</span>.assertEqual(task_url, tasks[<span class="dv">0</span>].url)</code></pre>
 <p>The following test case shows how to write a test that uses the datastore stub based on the simple configuration method using <code>nosegae_&lt;stubname&gt;</code> and <code>nosegae_&lt;stubname&gt;_kwargs</code>.</p>

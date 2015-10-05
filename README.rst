@@ -283,8 +283,8 @@ each test.
             from google.appengine.api import taskqueue
             task_url = '/some/task'
             taskqueue.add(url=task_url)
-            stub = self.testbed.get_stub('taskqueue')
-            tasks = self.taskqueue_stub.get_filtered_tasks(url=task_url)
+            taskqueue_stub = self.testbed.get_stub('taskqueue')
+            tasks = taskqueue_stub.get_filtered_tasks(url=task_url)
             self.assertEqual(1, len(tasks))
             self.assertEqual(task_url, tasks[0].url)
 
