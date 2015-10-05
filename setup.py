@@ -14,7 +14,7 @@ setup(
     maintainer_email="johnston.joshua+nosegae@gmail.com",
     description=DESCRIPTION,
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Environment :: Console",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
