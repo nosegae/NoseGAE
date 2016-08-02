@@ -5,6 +5,10 @@ NoseGAE: Nose for Google App Engine Testing
 [![License](https://img.shields.io/pypi/l/NoseGAE.svg)](https://pypi.python.org/pypi/NoseGAE)
 [![Build Status](https://travis-ci.org/Trii/NoseGAE.svg?branch=master)](https://travis-ci.org/Trii/NoseGAE)
 
+## Installing
+
+NoseGAE is available from the cheeseshop and can be installed easiest via `pip install nosegae`. While the library is actively maintained, no new features are being added at this time so development has stagnated. If you want to work on the library, or just like to clone and install you can use your choice of `python setup.py install` or `python setup.py develop` or even the `pip` equiv.
+
 ## Overview
 
 NoseGAE is a [nose](http://nose.readthedocs.org/en/latest/index.html) plugin that makes it easier to
