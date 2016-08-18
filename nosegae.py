@@ -75,7 +75,7 @@ class NoseGAE(Plugin):
             if not os.path.isdir(path_):
                 path_ = os.path.dirname(path_)
             if path_ not in sys.path:
-                sys.path.append(path_)
+                sys.path.insert(0, path_)
 
         if 'google' in sys.modules:
             # make sure an egg (e.g. protobuf) is not cached
