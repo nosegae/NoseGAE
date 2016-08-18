@@ -3,7 +3,15 @@ python:
   - "2.7"
 install:
   - ./examples/install-gcloud-sdk.sh
-  - pip install -r examples/test_requirements.txt
+  - pip install -U -r examples/test_requirements.txt
   - python setup.py install
 script:
   - ./runtests.sh
+deploy:
+  provider: pypi
+  user: Josh.Johnston
+  password:
+    secure: GEUYOZo0QJWjxzrx0oxSvQOnEM/mXCdccj2WItcxc9xyFv2W80JSY+/b0ByFZxyAtz1pRmr9qd52NFRU5E1oS+1S01xXoQdr8o2ruWlMexa4rh25zuuc1M9VfQGraBsoqJHHku77wIqq+3ry4ADbGgtSecXemlKVDNIhfOanPPQ=
+  on:
+    tags: true
+    repo: Trii/NoseGAE
