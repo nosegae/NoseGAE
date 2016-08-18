@@ -7,6 +7,8 @@ install:
   - python setup.py install
 script:
   - ./runtests.sh
+before_deploy:
+  - ./mkdocs.sh
 deploy:
   provider: pypi
   user: Josh.Johnston
