@@ -1,3 +1,9 @@
+0.5.9
+- Put app code ahead of GAE lib in sys.path. Thanks gregpsycle!
+
+0.5.8
+- Update the docs, update the tests to use the app engine sdk.
+
 0.5.7
 - Re-added code that removes GAE log handler. Thanks obmarg!
 
