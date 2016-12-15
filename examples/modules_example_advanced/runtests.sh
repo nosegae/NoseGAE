@@ -1,4 +1,4 @@
 #!/bin/bash
 cd "$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-nosetests --with-gae --gae-lib-root ../google_appengine \
+nosetests --with-gae --gae-lib-root ${GAE_PYTHONPATH} \
           --gae-application='default/app.yaml,mobile/mobile_frontend.yaml,static/static_backend.yaml,dispatch.yaml'

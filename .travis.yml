@@ -1,8 +1,15 @@
 language: python
 python:
   - "2.7"
+env:
+# Make sure the App Engine SDK is in the Python path
+- GAE_PYTHONPATH=${HOME}/.cache/google_appengine PYTHONPATH=${PYTHONPATH}:${GAE_PYTHONPATH}
+before_install:
+# Install Google App Engine Python SDK
+- if [ ! -d "${GAE_PYTHONPATH}" ]; then
+    python examples/fetch_gae_sdk.py $(dirname "${GAE_PYTHONPATH}");
+  fi
 install:
-  - ./examples/install-appengine-sdk.sh
   - pip install -U -r examples/test_requirements.txt
   - python setup.py install
 script:
