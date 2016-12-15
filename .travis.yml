@@ -1,6 +1,9 @@
 language: python
 python:
   - "2.7"
+addons:
+  apt_packages:
+    - pandoc
 env:
 # Make sure the App Engine SDK is in the Python path
 - GAE_PYTHONPATH=${HOME}/.cache/google_appengine PYTHONPATH=${PYTHONPATH}:${GAE_PYTHONPATH}
